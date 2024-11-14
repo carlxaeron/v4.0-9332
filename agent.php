@@ -472,6 +472,41 @@ $osTicket = $mh->moduleIsEnabled('osTicket');
 			.editable-disabled {
 					color: #fff !important;
 			}
+
+			#cust_info {
+				background-color: #000;
+			}
+			#popup-hotkeys {
+				background-color: #000;
+				color: white;
+			}
+			#popup-hotkeys .panel-footer {
+				background-color: #000;
+			}
+			#popup-hotkeys .panel-footer .sidecolor {
+				color: white;
+			}
+			#popup-hotkeys .panel-body a:link, #popup-hotkeys .panel-body a:visited, #popup-hotkeys .panel-body a:hover, #popup-hotkeys .panel-body a:active, #popup-hotkeys dt.text-primary, #popup-hotkeys dd {
+				color: white !important;
+			}
+			#cust_info ul#agent_tablist > li.active > a {
+				background-color: #1c1c1c !important;
+				color: white !important;
+			}
+			#cust_info ul#agent_tablist > li > a {
+				background-color: #000 !important;
+				color: white !important;
+			}
+			#agent_tabs {
+				background-color: #000 !important;
+				color: white !important;
+			}
+			#contact_info label, #comments label, #custom_form label {
+				color: white !important;
+			}
+			#cust_info input {
+				color: #efefef !important;
+			}
 	</style>
 
 	<!-- ECCS Customiztion -->
