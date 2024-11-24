@@ -504,8 +504,25 @@ $osTicket = $mh->moduleIsEnabled('osTicket');
 			#contact_info label, #comments label, #custom_form label {
 				color: white !important;
 			}
-			#cust_info input {
+			#cust_info input, #cust_info select, #cust_info textarea {
 				color: #efefef !important;
+				border: 1px solid white !important;
+				margin-top: 1rem;
+				border-radius: 3px;
+				background-color: #000 !important;
+			}
+			#cust_info .select2-container--bootstrap.select2-container--disabled .select2-selection, #cust_info .select2-container--bootstrap.select2-container--disabled .select2-selection--multiple .select2-selection__choice {
+				background-color: #000 !important;
+				border: 1px solid white !important;
+				color: #efefef !important;
+				margin-top: 1rem;
+			}
+			#cust_info .select2-selection__rendered {
+				color: #000 !important;
+			}
+			#cust_info #contact_info label {
+				font-size: 16pt;
+				opacity: 1;
 			}
 	</style>
 
@@ -677,13 +694,14 @@ input:checked + .slider:before {
 								<?php if(ECCS_BLIND_MODE === 'n'){ ?>
 								<small><b><?=$lh->translationFor('note')?>:</b> <?=$lh->translationFor('hotkeys_note')?></small>
 								<?php } else { ?>
-								<small id="" style="" class="">Login to Phone Dialer [Shift + Home]</small><br>
-								<small id"" style="" class="">Shortcut Keys to Exit [Shift + End]</small><br>
-								<small id"" style="" class="">Shortcut Keys to Dial/Hangup [Shift + 1]</small><br>
-								<small id"" style="" class="">Shortcut Keys to Pause/Resume [Shift + 2]</small><br>
-								<small id"" style="" class="">Shortcut Keys to Open Webform [Shift + 3]</small><br>
-								<small id"" style="" class="">Shortcut Keys to Lead Preview [Shift + 4]</small><br>
-								<small id"" style="" class="">Shortcut Keys to Callback List [Shift + 5]</small>
+								<small id="" style="" class="">Login to Phone Dialer [Shift + Home]</small><br/>
+								<small id"" style="" class="">Shortcut Keys to Exit [Shift + End]</small><br/>
+								<small id"" style="" class="">Shortcut Keys to Dial/Hangup [Shift + 1]</small><br/>
+								<small id"" style="" class="">Shortcut Keys to Pause/Resume [Shift + 2]</small><br/>
+								<small id"" style="" class="">Shortcut Keys to Open Webform [Shift + 3]</small><br/>
+								<small id"" style="" class="">Shortcut Keys to Lead Preview [Shift + 4]</small><br/>
+								<small id"" style="" class="">Shortcut Keys to Callback List [Shift + 5]</small><br/>
+								<small id"" style="" class="">Shortcut Keys to Dial Lead [Shift + 6]</small>
 								<?php } ?>
 							</div>
 						</div>
@@ -753,11 +771,13 @@ input:checked + .slider:before {
 												<span style="font-family:Arial; font-style:Bold;" class="fa fa-user hidden"></span>
 												<?=$lh->translationFor('contact_information')?></a>
 										 </li>
+										 <?php if (ECCS_BLIND_MODE === 'n') { ?>
 										 <li role="presentation">
 											<a href="#comments_tab" aria-controls="home" role="tab" data-toggle="tab" class="bb0">
 												<span class="fa fa-comments-o hidden"></span>
 											    <?=$lh->translationFor('comments')?></a>
 										 </li>
+										 <?php } ?>
 										 <li role="presentation">
 											<a href="#scripts" aria-controls="home" role="tab" data-toggle="tab" class="bb0">
 												<span class="fa fa-file-text-o hidden"></span>
@@ -879,11 +899,16 @@ input:checked + .slider:before {
 														</div>
 														<div class="col-xl-12 col-lg-6">																				<div class="mda-form-group label-floating">
 																<input id="address2" name="address2" type="text" maxlength="100" value="<?php echo $address2;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled>
-																<label for="address2"><?=$lh->translationFor('address2')?></label>
+																<label for="address2">DNC Expiry</label>
+															</div>
+														</div>
+														<div class="col-xl-12 col-lg-6">																				<div class="mda-form-group label-floating">
+																<input id="address3" name="address3" type="text" maxlength="100" value="<?php echo $address3;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled>
+																<label for="address3">DNC Info</label>
 															</div>
 														</div>
 													</div>
-													<!-- /.address1 & address2 -->
+													<!-- /.address1 & address2 & address3 -->
 													<div class="row">
 														<div class="col-sm-4">
 															<div class="mda-form-group label-floating">
@@ -1002,6 +1027,7 @@ input:checked + .slider:before {
 											<br id="custom_br" style="display: none;">
 										</div><!--End of Profile-->
 										
+										<?php if(ECCS_BLIND_MODE !== 'y'){ ?>
 										<div id="comments_tab" role="tabpanel" class="tab-pane">
 											<div class="row">
 												<div class="col-sm-12">
@@ -1022,6 +1048,7 @@ input:checked + .slider:before {
 												</div>
 											</div>
 										</div>
+										<?php } ?>
 										
 										<!-- Scripts -->
 										<div id="scripts" role="tabpanel" class="tab-pane">
@@ -1817,7 +1844,12 @@ input:checked + .slider:before {
 			</li>
 			<li style="padding: 0 5px 15px;">
 				<div class="material-switch pull-right">
-					<input id="LeadPreview" name="LeadPreview" value="0" type="checkbox"/>
+					<!-- make default check -->
+					<input id="LeadPreview" name="LeadPreview" value="0" type="checkbox" 
+					<?php if (ECCS_BLIND_MODE === 'y') { ?>
+						checked
+					<?php } ?>
+					/>
 					<label for="LeadPreview" class="label-primary"></label>
 				</div>
 				<div  class="sidebar-toggle-labels" style="font-weight: bold; text-transform: uppercase;"><label for="LeadPreview"><?=$lh->translationFor('lead_preview')?></label></div>
@@ -2929,10 +2961,12 @@ dding-top: 10px;">
                         	$('#agent_tablist li:nth-of-type(3)>a.bb0').append(" [#SC] ");
 
 				$('#edit-profile').append(" [#EI] ");
+				$('#contact_info label[for="first_name"]').append(" [#FN] ");
+				$('#contact_info label[for="last_name"]').append(" [#LN] ");
 				$('form#contact_details_form label[for="phone_number"]').append(" [#PN] ");
 				$('form#contact_details_form label[for="alt_phone"]').html("Alt Phone Number [#APN] ");
 				$('form#contact_details_form label[for="address1"]').append(" [#A1] ");
-				$('form#contact_details_form label[for="address2"]').append(" [#A2] ");
+				// $('form#contact_details_form label[for="address2"]').append(" [#A2] ");
                 	        $('form#contact_details_form label[for="city"]').append(" [#CT] ");
         	                $('form#contact_details_form label[for="state"]').append(" [#ST] ");
 	                        $('form#contact_details_form label[for="postal_code"]').append(" [#PC] ");

@@ -1396,6 +1396,10 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
                       } else {
                           $("a[href='#callbackslist']").click();
                       }
+
+                // Dial Lead
+                    } else if(e.shiftKey && e.key == "^") {
+                        $("a[title='DIAL LEAD']").click();
                     }
                 
                 if (!hotkeysReady) {
@@ -7243,7 +7247,8 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
             in_lead_preview_state = 1;
             var man_preview = 'YES';
        	<?php if( ECCS_BLIND_MODE === 'y' ){ ?> 
-            var man_status = "<a href=\"#\" onclick=\"ManualDialOnly('" + manual_dial_only_type_flag + "')\" title=\"<?=$lh->translationFor('dial_lead')?>\">&nbsp;<blink><?=$lh->translationFor('dial_lead')?> [#DL]</blink>&nbsp;</a> or <a href=\"#\" onclick=\"ManualDialSkip()\" title=\"<?=$lh->translationFor('skip_lead')?>\">&nbsp;<blink><?=$lh->translationFor('skip_lead')?> [#SL] </blink>&nbsp;</a>";
+            const style = 'font-size: 2rem;margin: 1rem 0;text-align:center;display:block;background-color: #000;color: white;border: none;padding: 10px 20px;text-decoration: none;font-weight: bold;border-radius: 5px;cursor: pointer;transition: background-color 0.3s ease;';
+            var man_status = "<a style='"+style+"' href=\"#\" onclick=\"ManualDialOnly('" + manual_dial_only_type_flag + "')\" title=\"<?=$lh->translationFor('dial_lead')?>\">&nbsp;<blink><?=$lh->translationFor('dial_lead')?> [#DL]</blink>&nbsp;</a> or <a style='"+style+"' href=\"#\" onclick=\"ManualDialSkip()\" title=\"<?=$lh->translationFor('skip_lead')?>\">&nbsp;<blink><?=$lh->translationFor('skip_lead')?> [#SL] </blink>&nbsp;</a>";
 	<?php } else { ?>
             var man_status = "<a href=\"#\" onclick=\"ManualDialOnly('" + manual_dial_only_type_flag + "')\">&nbsp;<blink><?=$lh->translationFor('dial_lead')?></blink>&nbsp;</a> or <a href=\"#\" onclick=\"ManualDialSkip()\">&nbsp;<blink><?=$lh->translationFor('skip_lead')?></blink>&nbsp;</a>";
 	<?php } ?>
