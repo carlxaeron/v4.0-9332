@@ -524,6 +524,9 @@ $osTicket = $mh->moduleIsEnabled('osTicket');
 				font-size: 16pt;
 				opacity: 1;
 			}
+			[title="DIAL LEAD"]:focus, [title="SKIP LEAD"]:focus {
+				text-decoration: underline !important;
+			}
 	</style>
 
 	<!-- ECCS Customiztion -->
@@ -818,8 +821,10 @@ input:checked + .slider:before {
 												<input type="hidden" value="<?php echo $list_id;?>" name="list_id">
 												<!--ENTRY LIST ID-->
 												<input type="hidden" value="<?php echo $entry_list_id;?>" name="entry_list_id">
+												<?php if(ECCS_BLIND_MODE !== 'y'){ ?>
 												<!--VENDOR ID-->
 												<input type="hidden" value="<?php echo $vendor_lead_code;?>" name="vendor_lead_code">
+												<?php } ?>
 												<!--GMT OFFSET-->
 												<input type="hidden" value="<?php echo $gmt_offset_now;?>" name="gmt_offset_now">
 												<!--SECURITY PHRASE-->
@@ -893,8 +898,8 @@ input:checked + .slider:before {
 														</div>
 														<?php if(ECCS_BLIND_MODE === 'y') { ?>
 														<div class="col-sm-6">																				<div class="mda-form-group label-floating">
-																<input id="province" name="province" type="text" maxlength="100" value="<?php echo $province;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled>
-																<label for="province">Lead Source</label>
+																<input id="vendor_lead_code" name="vendor_lead_code" type="text" maxlength="100" value="<?php echo $vendor_lead_code;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled>
+																<label for="vendor_lead_code">Lead Source</label>
 															</div>
 														</div>
 														<?php } ?>
@@ -925,6 +930,18 @@ input:checked + .slider:before {
 														<div class="col-xl-12 col-lg-6">																				<div class="mda-form-group label-floating">
 																<input id="address3" name="address3" type="text" maxlength="100" value="<?php echo $address3;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled>
 																<label for="address3">DNC Info</label>
+															</div>
+														</div>
+														<div class="col-sm-12">
+															<div class="mda-form-group label-floating">
+																<textarea rows="3" id="province" name="province" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea note-editor note-editor-margin input-disabled" disabled style="resize:none; width: 100%;"></textarea>
+																<label for="province">Other Info</label>
+															</div>
+														</div>
+														<div class="col-sm-12">
+															<div class="mda-form-group label-floating">
+																<textarea rows="10" id="comments" name="comments" maxlength="255" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea input-disabled note-editor note-editor-margin input-disabled" disabled style="resize:none; width: 100%;" disabled><?=$comments?></textarea>
+																<label for="comments">Remarks</label>
 															</div>
 														</div>
 													</div>
@@ -1001,7 +1018,7 @@ input:checked + .slider:before {
 													</div>
 													<!-- /.gender & title -->
 
-													<div id="call_notes_content" class="col-sm-12">
+													<div id="call_notes_content" class="col-sm-12 hidden">
 														<div class="form-group" style="width:100%;">
 															<textarea rows="3" id="call_notes" name="call_notes" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea note-editor note-editor-margin" style="resize:none; width: 100%;"></textarea>
 															<label for="call_notes"><?=$lh->translationFor('call_notes')?></label>
@@ -1058,10 +1075,10 @@ input:checked + .slider:before {
 															<p style="padding-right:0px;padding-top: 20px;"><?=$lh->translationFor('comments')?>:</p> 
 															<button id="ViewCommentButton" onClick="ViewComments('ON');" value="-History-" class="hidden"></button>
 														</div>
-														<div class="form-group" style="float: left; width:100%;">
+														<!-- <div class="form-group" style="float: left; width:100%;">
 															<textarea rows="10" id="comments" name="comments" maxlength="255" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea input-disabled note-editor note-editor-margin" style="resize:none; width: 100%;" disabled><?=$comments?></textarea>
 															<label for="comments"><?=$lh->translationFor('comments')?></label>
-														</div>
+														</div> -->
 													</form>
 												</div>
 											</div>
@@ -2991,6 +3008,8 @@ dding-top: 10px;">
 	                        $('form#gender_form label[for="title"]').append(" [#TI] ");
                         	$('form#gender_form label[for="gender"]').append(" [#GE] ");
                 	        $('form#gender_form label[for="date_of_birth"]').append(" [#DB] ");
+                	        $('form#contact_details_form label[for="province"]').append(" [#OI] ");
+                	        $('form#contact_details_form label[for="comments"]').append(" [#RM] ");
         	                // $('form#gender_form label[for="call_notes"]').append(" [#CN] ");
 
 				$("[data-toggle='control-sidebar']").append("<br><span>#CONF</span>");

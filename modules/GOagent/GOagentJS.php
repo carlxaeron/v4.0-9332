@@ -2418,6 +2418,7 @@ function btnLogMeOut () {
         } else {
             sendLogout(true);
         }
+        $('#cust_info input, #cust_info #contact_details_form textarea').val('');
     }
 }
     
@@ -6730,7 +6731,7 @@ function CustomerData_update() {
         goAddress3: $(".formMain input[name='address3']").val(),
         goCity: $(".formMain input[name='city']").val(),
         goState: $(".formMain input[name='state']").val(),
-        goProvince: $(".formMain input[name='province']").val(),
+        goProvince: $(".formMain textarea[name='province']").val(),
         goPostalCode: $(".formMain input[name='postal_code']").val(),
         goCountryCode: $(".formMain select[name='country_code']").val(),
         goGender: $(".formMain select[name='gender']").val(),
@@ -7451,7 +7452,7 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
                     $(".formMain input[name='address3']").val(thisVdata.address3).trigger('change');
                     $(".formMain input[name='city']").val(thisVdata.city).trigger('change');
                     $(".formMain input[name='state']").val(thisVdata.state).trigger('change');
-                    $(".formMain input[name='province']").val(thisVdata.province).trigger('change');
+                    $(".formMain textarea[name='province']").val(thisVdata.province).trigger('change');
                     $(".formMain input[name='postal_code']").val(thisVdata.postal_code).trigger('change');
                     $(".formMain select[name='country_code']").val(thisVdata.country_code).trigger('change');
                     $(".formMain select[name='gender']").val(thisVdata.gender).trigger('change');
