@@ -697,14 +697,14 @@ input:checked + .slider:before {
 								<?php if(ECCS_BLIND_MODE === 'n'){ ?>
 								<small><b><?=$lh->translationFor('note')?>:</b> <?=$lh->translationFor('hotkeys_note')?></small>
 								<?php } else { ?>
-								<small id="" style="" class="">Login to Phone Dialer [Shift + Home]</small><br/>
-								<small id"" style="" class="">Shortcut Keys to Exit [Shift + End]</small><br/>
-								<small id"" style="" class="">Shortcut Keys to Dial/Hangup [Shift + 1]</small><br/>
-								<small id"" style="" class="">Shortcut Keys to Pause/Resume [Shift + 2]</small><br/>
-								<small id"" style="" class="">Shortcut Keys to Open Webform [Shift + 3]</small><br/>
-								<small id"" style="" class="">Shortcut Keys to Lead Preview [Shift + 4]</small><br/>
-								<small id"" style="" class="">Shortcut Keys to Callback List [Shift + 5]</small><br/>
-								<small id"" style="" class="">Shortcut Keys to Dial Lead [Shift + 6]</small>
+								<small id="" style="" class="">Login [Shift + Home]</small><br/>
+								<small id"" style="" class="">Logout[Shift + End]</small><br/><br/>
+								<small id"" style="" class="">Dial/Hangup [Shift + 1]</small><br/>
+								<small id"" style="" class="">Pause/Resume [Shift + 2]</small><br/>
+								<small id"" style="" class="">Open Webform [Shift + 3]</small><br/>
+								<small id"" style="" class="">Lead Preview [Shift + 4]</small><br/>
+								<small id"" style="" class="">Callback List [Shift + 5]</small><br/>
+								<small id"" style="" class="">Dial Lead [Shift + 6]</small>
 								<?php } ?>
 							</div>
 						</div>
@@ -810,7 +810,7 @@ input:checked + .slider:before {
 
 											<fieldset style="padding-bottom: 0px; margin-bottom: 0px;">
 												<h4 style="display: flex;">
-													<a href="#" data-role="button" class="pull-right edit-profile-button hidden" id="edit-profile" style="margin-left: auto;"><?=$lh->translationFor('edit_information')?></a>
+													<a href="#" data-role="button" class="pull-right edit-profile-button hidden" id="edit-profile" style="margin-left: auto; display: none !important;"><?=$lh->translationFor('edit_information')?></a>
 												</h4>
 												<!-- <br/> -->
 												<form role="form" id="name_form" class="formMain form-inline" >
@@ -847,9 +847,7 @@ input:checked + .slider:before {
 													<div class="col-sm-6">
 														<div class="mda-form-group label-floating">
 															<input id="first_name" name="first_name" type="text" maxlength="30"  value="<?php echo $first_name;?>"
-																class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched 
-																input-<?php if(ECCS_BLIND_MODE !== 'y') { ?>phone-<?php } ?>disabled" 
-																disabled
+																class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" 
 																required>
 															<label for="first_name"><?=$lh->translationFor('first_name')?></label>
 														</div>
@@ -864,9 +862,7 @@ input:checked + .slider:before {
 													<div class="col-sm-6">
 														<div class="mda-form-group label-floating">
 															<input id="last_name" name="last_name" type="text" maxlength="30" value="<?php echo $last_name;?>"
-																class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched 
-																input-<?php if(ECCS_BLIND_MODE !== 'y') { ?>phone-<?php } ?>disabled" 
-																disabled  
+																class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched"
 																required>
 															<label for="last_name"><?=$lh->translationFor('last_name')?></label>
 														</div>
@@ -881,9 +877,7 @@ input:checked + .slider:before {
 															<div class="mda-form-group label-floating">
 																<span id="phone_numberDISP" class="hidden"></span>
 																<input id="phone_code" name="phone_code" type="hidden" value="<?php echo $phone_code;?>">
-																<input id="phone_number" name="phone_number" type="number" min="0" maxlength="18" width="auto" value="<?php echo $phone_number; ?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched 
-																	input-<?php if(ECCS_BLIND_MODE !== 'y') { ?>phone-<?php } ?>disabled" 
-																	disabled 
+																<input id="phone_number" name="phone_number" type="number" min="0" maxlength="18" width="auto" value="<?php echo $phone_number; ?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" 
 																	required>
 																<input id="phone_number_DISP" type="number" min="0" maxlength="18" width="auto" value="" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched hidden" disabled>
 																<label for="phone_number">
@@ -898,7 +892,7 @@ input:checked + .slider:before {
 														</div>
 														<?php if(ECCS_BLIND_MODE === 'y') { ?>
 														<div class="col-sm-6">																				<div class="mda-form-group label-floating">
-																<input id="vendor_lead_code" name="vendor_lead_code" type="text" maxlength="100" value="<?php echo $vendor_lead_code;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled>
+																<input id="vendor_lead_code" name="vendor_lead_code" type="text" maxlength="100" value="<?php echo $vendor_lead_code;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched">
 																<label for="vendor_lead_code">Lead Source</label>
 															</div>
 														</div>
@@ -923,24 +917,24 @@ input:checked + .slider:before {
 														</span>-->
 														</div>
 														<div class="col-xl-12 col-lg-6">																				<div class="mda-form-group label-floating">
-																<input id="address2" name="address2" type="text" maxlength="100" value="<?php echo $address2;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled>
+																<input id="address2" name="address2" type="text" maxlength="100" value="<?php echo $address2;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched">
 																<label for="address2">DNC Expiry</label>
 															</div>
 														</div>
 														<div class="col-xl-12 col-lg-6">																				<div class="mda-form-group label-floating">
-																<input id="address3" name="address3" type="text" maxlength="100" value="<?php echo $address3;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled>
+																<input id="address3" name="address3" type="text" maxlength="100" value="<?php echo $address3;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched">
 																<label for="address3">DNC Info</label>
 															</div>
 														</div>
 														<div class="col-sm-12">
 															<div class="mda-form-group label-floating">
-																<textarea rows="3" id="province" name="province" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea note-editor note-editor-margin input-disabled" disabled style="resize:none; width: 100%;"></textarea>
+																<textarea rows="3" id="province" name="province" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea note-editor note-editor-margin" style="resize:none; width: 100%;font-size: 16pt;font-weight: 700;"></textarea>
 																<label for="province">Other Info</label>
 															</div>
 														</div>
 														<div class="col-sm-12">
 															<div class="mda-form-group label-floating">
-																<textarea rows="10" id="comments" name="comments" maxlength="255" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea input-disabled note-editor note-editor-margin input-disabled" disabled style="resize:none; width: 100%;" disabled><?=$comments?></textarea>
+																<textarea rows="10" id="comments" name="comments" maxlength="255" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea note-editor note-editor-margin" style="resize:none; width: 100%;"><?=$comments?></textarea>
 																<label for="comments">Remarks</label>
 															</div>
 														</div>
