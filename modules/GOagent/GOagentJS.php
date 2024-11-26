@@ -5065,7 +5065,7 @@ function NewCallbackCall(taskCBid, taskLEADid, taskCBalt) {
             if (alt_phone_dialing == 1) {
                 $("#DialALTPhoneMenu").show();
             }
-            $("#LeadPreview").prop('checked', false);
+            //$("#LeadPreview").prop('checked', false);
             //$("#DialALTPhone").prop('checked', true);
             if (deBug) console.log("ManualDialNext", "Line #: <?=__LINE__?>");
             ManualDialNext(taskCBid,taskLEADid,'','','','0','',taskCBalt);
