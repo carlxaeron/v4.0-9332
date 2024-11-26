@@ -892,7 +892,7 @@ input:checked + .slider:before {
 														</div>
 														<?php if(ECCS_BLIND_MODE === 'y') { ?>
 														<div class="col-sm-6">																				<div class="mda-form-group label-floating">
-																<input id="vendor_lead_code" name="vendor_lead_code" type="text" maxlength="100" value="<?php echo $vendor_lead_code;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched">
+																<input id="vendor_lead_code" name="vendor_lead_code" type="text" maxlength="100" value="<?php echo $vendor_lead_code;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly>
 																<label for="vendor_lead_code">Lead Source</label>
 															</div>
 														</div>
@@ -917,12 +917,12 @@ input:checked + .slider:before {
 														</span>-->
 														</div>
 														<div class="col-xl-12 col-lg-6">																				<div class="mda-form-group label-floating">
-																<input id="address2" name="address2" type="text" maxlength="100" value="<?php echo $address2;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched">
+																<input id="address2" name="address2" type="text" maxlength="100" value="<?php echo $address2;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly>
 																<label for="address2">DNC Expiry</label>
 															</div>
 														</div>
 														<div class="col-xl-12 col-lg-6">																				<div class="mda-form-group label-floating">
-																<input id="address3" name="address3" type="text" maxlength="100" value="<?php echo $address3;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched">
+																<input id="address3" name="address3" type="text" maxlength="100" value="<?php echo $address3;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly>
 																<label for="address3">DNC Info</label>
 															</div>
 														</div>
