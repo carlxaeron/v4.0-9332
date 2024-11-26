@@ -9448,7 +9448,8 @@ function LoadScriptContents() {
             new_script_content = new_script_content.replace(" + ", "!PLUS!");
             new_script_content = new_script_content.replace(/\+/g, " ");
             new_script_content = new_script_content.replace("!PLUS!", " + ");
-            $("#ScriptContents").html(new_script_content);
+            $("#ScriptContents").html(new_script_content)
+            .find('table').attr('style', 'color:white;');
         }
     });
 }
