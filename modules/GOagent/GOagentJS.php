@@ -6329,7 +6329,7 @@ function DispoSelectSubmit() {
     
             $.ajax({
                 type: 'POST',
-                url: '<?=$goAPI?>/goAgent/goAPI.php',
+                url: '<?=$goAPI?>/goAgent/goAPI.php?goUpdateDispo',
                 processData: true,
                 data: postData,
                 dataType: "json",
@@ -7316,7 +7316,7 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
 
         $.ajax({
             type: 'POST',
-            url: '<?=$goAPI?>/goAgent/goAPI.php',
+            url: '<?=$goAPI?>/goAgent/goAPI.php?goManualDialNext',
             processData: true,
             data: postData,
             dataType: "json",
