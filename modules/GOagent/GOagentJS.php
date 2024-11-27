@@ -1353,7 +1353,8 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
                               type: 'error'
                           });
                       } else {
-                          btnLogMeOut();
+                        //  btnLogMeOut();
+                        $("#cream-agent-logout").click();
                       }
       
                 // Phone Log In
