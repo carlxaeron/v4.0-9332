@@ -6326,6 +6326,10 @@ function DispoSelectSubmit() {
                 goSendEmail: cb_sendemail,
                 responsetype: 'json'
             };
+
+            if (window.NODIALPLEASE === 2) {
+                window.NODIALPLEASE = 0;
+            }
     
             $.ajax({
                 type: 'POST',
@@ -6339,7 +6343,7 @@ function DispoSelectSubmit() {
             })
             .done(function (result) {
                 if(DispoChoice === 'CBHOLD' && (!window.NODIALPLEASE || window.NODIALPLEASE <= 0)){
-                    window.NODIALPLEASE = window.NODIALPLEASE ? window.NODIALPLEASE + 1 : 0;
+                    window.NODIALPLEASE = window.NODIALPLEASE ? window.NODIALPLEASE + 1 : 1;
                 }
 
                 if (auto_dial_level < 1) {
@@ -7329,7 +7333,9 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
                 }
             })
             .done(function (result) {
-                window.NODIALPLEASE = window.NODIALPLEASE ? window.NODIALPLEASE + 1 : 1;
+                if(window.NODIALPLEASE === 1) {
+                    window.NODIALPLEASE = window.NODIALPLEASE + 1;
+                }
                 //dialingINprogress = 0;
                 //console.log(result);
 
