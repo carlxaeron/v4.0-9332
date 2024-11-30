@@ -7637,16 +7637,12 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
                         $("#cust_call_type").html(" - <span style='background-color: purple;'>CALLBACK - Last call by " + CBuser + "</span>");
                         <?php } ?>
                         
-                        <?php
-                        if(ECCS_BLIND_MODE !== 'y'){
-                        ?>
                         swal({
                             title: "<?=$lh->translationFor('previous_callback')?>",
                             text: "<div class='swal-previous-callback' style='text-align: left; padding: 0 30px;'><div style='padding-bottom: 10px;'><b><?=$lh->translationFor('last_call')?>:</b> " + CBentry_time + "</div><div style='padding-bottom: 10px;'><b><?=$lh->translationFor('callback')?>:</b> " + CBcallback_time + "</div><div style='padding-bottom: 10px;'><b><?=$lh->translationFor('agent')?>:</b> " + CBuser + "</div><div style='padding-bottom: 10px;'><b><?=$lh->translationFor('comments')?>:</b><br />" + CBcomments + "</div></div>",
                             type: 'info',
                             html: true
                         });
-                        <?php } ?>
 
 			<?php if(ECCS_BLIND_MODE === 'y'){ ?>
         	        $("div.swal-previous-callback").attr("title", "<?=$lh->translationFor('previous_callback')?>");

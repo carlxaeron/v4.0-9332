@@ -774,13 +774,11 @@ input:checked + .slider:before {
 												<span style="font-family:Arial; font-style:Bold;" class="fa fa-user hidden"></span>
 												<?=$lh->translationFor('contact_information')?></a>
 										 </li>
-										 <?php if (ECCS_BLIND_MODE === 'n') { ?>
-										 <li role="presentation">
+										 <li role="presentation" style="<?= ECCS_BLIND_MODE === 'y' ? 'display: none;' : ''; ?>">
 											<a href="#comments_tab" aria-controls="home" role="tab" data-toggle="tab" class="bb0">
 												<span class="fa fa-comments-o hidden"></span>
 											    <?=$lh->translationFor('comments')?></a>
 										 </li>
-										 <?php } ?>
 										 <li role="presentation">
 											<a href="#scripts" aria-controls="home" role="tab" data-toggle="tab" class="bb0">
 												<span class="fa fa-file-text-o hidden"></span>
