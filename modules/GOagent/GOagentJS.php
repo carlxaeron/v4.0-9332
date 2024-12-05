@@ -6729,7 +6729,8 @@ function CustomerData_update() {
         goSessionName: session_name,
         goComments: REGcommentsRESULT,
         goVendorLeadCode: $(".formMain input[name='vendor_lead_code']").val(),
-        goPhoneNumber: $(".formMain input[name='phone_number']").val(),
+        // goPhoneNumber: $(".formMain input[name='phone_number']").val(),
+        goPhoneNumber: $("input#cust_number").val(),
         goTitle: $(".formMain input[name='title']").val(),
         //goFirstName: $("#cust_full_name a[id='first_name']").editable('getValue', true),
         //goMiddleInitial: $("#cust_full_name a[id='middle_initial']").editable('getValue', true),
@@ -6801,7 +6802,7 @@ function CustomerData_update() {
 
     $.ajax({
         type: 'POST',
-        url: '<?=$goAPI?>/goAgent/goAPI.php',
+        url: '<?=$goAPI?>/goAgent/goAPI.php?goUpdateLead',
         processData: true,
         data: postData,
         dataType: "json",
