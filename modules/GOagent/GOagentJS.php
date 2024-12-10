@@ -1202,7 +1202,7 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
     $("#go_nav_btn").append("<div id='livecall' class='center-block'><h3 class='nolivecall' title=''><?=$lh->translationFor('no_live_call')?></h3></div>");
     $("#go_nav_btn").append("<div id='go_btn_div' class='center-block' style='text-align: center;'></div>");
     $("#go_btn_div").append("<button id='btnDialHangup' title='<?=$lh->translationFor('dial_next_call')?>' class='btn btn-primary btn-lg' style='margin: 0 5px 5px 0; font-size: 16px;'><i class='fa fa-phone'></i></button>");
-    $("#go_btn_div").append("<button id='btnResumePause' title='<?=$lh->translationFor('resume_dialing')?>' class='btn btn-success btn-lg' style='margin: 0 5px 5px 0; font-size: 16px;'><i class='fa fa-play'></i></button>");
+    //$("#go_btn_div").append("<button id='btnResumePause' title='<?=$lh->translationFor('resume_dialing')?>' class='btn btn-success btn-lg' style='margin: 0 5px 5px 0; font-size: 16px;'><i class='fa fa-play'></i></button>");
     $("#go_btn_div").append("<button id='btnParkCall' title='<?=$lh->translationFor('park_call')?>' class='btn btn-warning btn-lg' style='margin: 0 5px 5px 0; font-size: 15px; padding-bottom: 11px;'><i class='fa fa-music'></i></button>");
     $("#go_btn_div").append("<button id='btnTransferCall' title='<?=$lh->translationFor('transfer_call')?>' class='btn btn-default btn-lg' style='margin: 0 5px 5px 0; padding: 10px 19px; font-size: 15px;'><i class='fa fa-random'></i></button>");
     $("#go_btn_div").append("<button id='btnIVRParkCall' title='<?=$lh->translationFor('ivr_park_call')?>' class='btn btn-default btn-lg' style='margin: 0 5px 5px 0; padding: 10px 18px 10px 19px; font-size: 15px;'><i class='fa fa-tty'></i></button>");
@@ -1872,6 +1872,7 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
     });
     
     $("input.digits-only, input.phonenumbers-only").keypress(function (e) {
+        console.log('keypress');
         var thisOne = $(this);
         //if the letter is not digit then display error and don't type anything
         if (thisOne.hasClass('digits-only') && e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
@@ -1972,13 +1973,13 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
         }
     });
     
-    $("input").on('focus', function() {
-	if ($("#enableHotKeys").is(':checked')) {
-	    $(document).off('keydown', 'body', hotKeysAvailable);
-	}
+    $("input, textarea").on('focus', function() {
+        if ($("#enableHotKeys").is(':checked')) {
+            $(document).off('keydown', 'body', hotKeysAvailable);
+        }
     });
     
-    $("input").on('focusout', function() {
+    $("input, textarea").on('focusout', function() {
 	if ($("#enableHotKeys").is(':checked')) {
             $(document).on('keydown', 'body', hotKeysAvailable);
 	}
@@ -3969,7 +3970,7 @@ function CheckForIncoming () {
             <?php
             if(ECCS_BLIND_MODE === 'y'){
             ?>
-            $("#cust_campaign_name").html("["+ campaign_name + "] - ");
+            $("#cust_campaign_name").html("["+ campaign_name + "] ");
             $("#cust_call_type").html(" - <span style='background-color: blue;'>OUTBOUNDzz CALL</span>");
             <?php } ?>
 
@@ -3986,7 +3987,7 @@ function CheckForIncoming () {
                 <?php
                 if(ECCS_BLIND_MODE === 'y'){
                 ?>
-                $("#cust_campaign_name").html("["+ campaign_name + "] - ");
+                $("#cust_campaign_name").html("["+ campaign_name + "] ");
                 $("#cust_call_type").html(" - <span style='background-color: purple;'>CALLBACK - Last call by " + CBuser + "</span>");
                  <?php } ?>
                 
@@ -4047,7 +4048,7 @@ function CheckForIncoming () {
                 <?php
                 if(ECCS_BLIND_MODE === 'y'){
                 ?>
-                $("#cust_campaign_name").html("["+ this_VDIC_data.group_name + "] - ");
+                $("#cust_campaign_name").html("["+ this_VDIC_data.group_name + "] ");
                 $("#cust_call_type").html(" - <span style='background-color: red;'>INBOUND CALL</span>");
                 <?php } ?>
             }
@@ -7266,14 +7267,14 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
             in_lead_preview_state = 1;
             var man_preview = 'YES';
        	<?php if( ECCS_BLIND_MODE === 'y' ){ ?> 
-            const style = 'font-size: 2rem;margin: 1rem 0;text-align:center;display:block;background-color: #000;color: white;border: none;padding: 10px 20px;text-decoration: none;font-weight: bold;border-radius: 5px;cursor: pointer;transition: background-color 0.3s ease;';
-            var man_status = "<a style='"+style+"' href=\"#\" onclick=\"ManualDialOnly('" + manual_dial_only_type_flag + "')\" title=\"<?=$lh->translationFor('dial_lead')?>\">&nbsp;<blink><?=$lh->translationFor('dial_lead')?> [#DL]</blink>&nbsp;</a> or <a style='"+style+"' href=\"#\" onclick=\"ManualDialSkip()\" title=\"<?=$lh->translationFor('skip_lead')?>\">&nbsp;<blink><?=$lh->translationFor('skip_lead')?> [#SL] </blink>&nbsp;</a>";
+            const style = 'border:2px solid white !important;font-size: 2rem;margin: 1rem 0;text-align:center;display:block;background-color: #000;color: white;border: none;padding: 10px 20px;text-decoration: none;font-weight: bold;border-radius: 5px;cursor: pointer;transition: background-color 0.3s ease;';
+            var man_status = "<a style='"+style+"' href=\"#\" onclick=\"ManualDialOnly('" + manual_dial_only_type_flag + "')\" title=\"<?=$lh->translationFor('dial_lead')?>\">&nbsp;<blink><!-- <?=$lh->translationFor('dial_lead')?> -->Dial Lead [#DL]</blink>&nbsp;</a> or <a style='"+style+"' href=\"#\" onclick=\"ManualDialSkip()\" title=\"<?=$lh->translationFor('skip_lead')?>\">&nbsp;<blink><!-- <?=$lh->translationFor('skip_lead')?> -->Skip Lead [#SL] </blink>&nbsp;</a>";
 	<?php } else { ?>
-            var man_status = "<a href=\"#\" onclick=\"ManualDialOnly('" + manual_dial_only_type_flag + "')\">&nbsp;<blink><?=$lh->translationFor('dial_lead')?></blink>&nbsp;</a> or <a href=\"#\" onclick=\"ManualDialSkip()\">&nbsp;<blink><?=$lh->translationFor('skip_lead')?></blink>&nbsp;</a>";
+            var man_status = "<a href=\"#\" onclick=\"ManualDialOnly('" + manual_dial_only_type_flag + "')\">&nbsp;<blink><!-- <?=$lh->translationFor('dial_lead')?> -->Dial Lead</blink>&nbsp;</a> or <a href=\"#\" onclick=\"ManualDialSkip()\">&nbsp;<blink><!-- <?=$lh->translationFor('skip_lead')?> --> Skip Lead</blink>&nbsp;</a>";
 	<?php } ?>
 
             if (manual_preview_dial=='PREVIEW_ONLY') {
-                var man_status = "<a href=\"#\" onclick=\"ManualDialOnly('" + manual_dial_only_type_flag + "')\">&nbsp;<blink><?=$lh->translationFor('dial_lead')?></blink>&nbsp;</a>";
+                var man_status = "<a href=\"#\" onclick=\"ManualDialOnly('" + manual_dial_only_type_flag + "')\">&nbsp;<blink><!-- <?=$lh->translationFor('dial_lead')?> --> Dial Lead</blink>&nbsp;</a>";
             }
         } else {
             reselect_preview_dial = 0;
@@ -7465,7 +7466,7 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
                     <?php
                     if(ECCS_BLIND_MODE === 'y'){
                     ?>
-                    $("#cust_campaign_name").html("["+ campaign_name + "] - ");
+                    $("#cust_campaign_name").html("["+ campaign_name + "] ");
                     $("#cust_call_type").html(" - <span style='background-color: blue;'>OUTBOUND CALL</span>");
                     <?php } ?>
 
@@ -7654,7 +7655,7 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
                         <?php
                         if(ECCS_BLIND_MODE === 'y'){
                         ?>
-                        $("#cust_campaign_name").html("["+ campaign_name + "] - ");
+                        $("#cust_campaign_name").html("["+ campaign_name + "] ");
                         $("#cust_call_type").html(" - <span style='background-color: purple;'>CALLBACK - Last call by " + CBuser + "</span>");
                         <?php } ?>
                         
