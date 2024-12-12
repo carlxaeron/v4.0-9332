@@ -4998,6 +4998,8 @@ function CallBacksCountCheck() {
 // ################################################################################
 // Open up a callback customer record as manual dial preview mode
 function NewCallbackCall(taskCBid, taskLEADid, taskCBalt) {
+    window.NODIALPLEASE = 1;
+
     var move_on = 1;
     if (typeof taskCBalt == 'undefined' || taskCBalt == '') {
         taskCBalt = 'MAIN';
@@ -6343,9 +6345,9 @@ function DispoSelectSubmit() {
                 }
             })
             .done(function (result) {
-                if(DispoChoice === 'CBHOLD' || window.NODIALPLEASE === 999) {
+                // if(DispoChoice === 'CBHOLD' || window.NODIALPLEASE === 999) {
                     window.NODIALPLEASE = 1;
-                }
+                // }
 
                 if (auto_dial_level < 1) {
                     if (result.result == 'success') {
@@ -6812,6 +6814,8 @@ function CustomerData_update() {
         }
     })
     .done(function (result) {
+        window.NODIALPLEASE = 1;
+        
         console.log('Customer data updated...');
         
         $('.input-disabled').prop('disabled', true);
