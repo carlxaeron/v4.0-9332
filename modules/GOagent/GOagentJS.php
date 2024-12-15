@@ -138,6 +138,24 @@ var clear_custom_fields = true;
 var previous_dispo = 'NEW';
 var MD_dial_timed_out = 0;
 
+// Add this near the start of the file, after the initial variable declarations
+var consoleColors = {
+    success: 'color: #4CAF50; font-weight: bold', // Green
+    error: 'color: #f44336; font-weight: bold',   // Red
+    warning: 'color: #ff9800; font-weight: bold', // Orange
+    info: 'color: #2196F3; font-weight: bold',    // Blue
+    debug: 'color: #9c27b0; font-weight: bold',   // Purple
+    label: 'color: #607d8b; font-weight: bold'    // Blue Grey
+};
+
+// Add this helper function for consistent console logging
+function colorLog(label, msg, type) {
+    console.log(`%c${label}:%c ${msg}`, 
+        consoleColors.label,
+        consoleColors[type] || consoleColors.info
+    );
+}
+
 <?php if( ECCS_BLIND_MODE === 'y' ) { ?>
 var enable_eccs_shortcuts = 1;
 <?php } ?>
@@ -2593,9 +2611,9 @@ function btnDialHangup (is_true) {
                 dialInterval = setInterval(function() {
                     console.log("check_inbound_call", check_inbound_call);
                     console.log("is_call_cb", is_call_cb);
-                    if (!check_inbound_call && !is_call_cb) {
+                    if (!check_inbound_call && !is_call_cb || window.DDNLoop) {
                         toggleButton('ResumePause', 'off');
-                        if (has_inbound_call < 1 && live_customer_call < 1 && waiting_on_dispo < 1) {
+                        if (has_inbound_call < 1 && live_customer_call < 1 && waiting_on_dispo < 1 || window.DDNLoop) {
                             has_outbound_call = 1;
                             if (deBug) console.log("ManualDialNext", "Line #: <?=__LINE__?>");
                             ManualDialNext('','','','','','0');
@@ -2605,7 +2623,7 @@ function btnDialHangup (is_true) {
                         dialInterval = undefined;
                     }
                     
-                    if (dialCount >= ECCS_DIAL_TIMEOUT) {
+                    if (dialCount >= ECCS_DIAL_TIMEOUT || window.DDNLoop) {
                         check_inbound_call = false;
                     }
                     
@@ -4998,7 +5016,7 @@ function CallBacksCountCheck() {
 // ################################################################################
 // Open up a callback customer record as manual dial preview mode
 function NewCallbackCall(taskCBid, taskLEADid, taskCBalt) {
-    window.NODIALPLEASE = 1;
+    window.DODIALPLEASE = 1;
 
     var move_on = 1;
     if (typeof taskCBalt == 'undefined' || taskCBalt == '') {
@@ -6330,13 +6348,13 @@ function DispoSelectSubmit() {
                 responsetype: 'json'
             };
 
-            if (window.NODIALPLEASE !== 999) {
-                window.NODIALPLEASE = 0;
+            if (window.DODIALPLEASE !== 999) {
+                window.DODIALPLEASE = 2;
             }
     
             $.ajax({
                 type: 'POST',
-                url: '<?=$goAPI?>/goAgent/goAPI.php?goUpdateDispo=' + window.NODIALPLEASE,
+                url: '<?=$goAPI?>/goAgent/goAPI.php?goUpdateDispo=' + window.DODIALPLEASE,
                 processData: true,
                 data: postData,
                 dataType: "json",
@@ -6345,9 +6363,14 @@ function DispoSelectSubmit() {
                 }
             })
             .done(function (result) {
-                // if(DispoChoice === 'CBHOLD' || window.NODIALPLEASE === 999) {
-                    window.NODIALPLEASE = 1;
-                // }
+                if(
+                    DispoChoice === 'CBHOLD'
+                    // && !$("#DispoSelectStop").is(':checked')
+                ) {
+                    colorLog('window.DODIALPLEASE 2', window.DODIALPLEASE, 'debug');
+                    window.DDNLoop = true;
+                }
+                window.DODIALPLEASE = 2;
 
                 if (auto_dial_level < 1) {
                     if (result.result == 'success') {
@@ -6403,7 +6426,7 @@ function DispoSelectSubmit() {
             $(".formMain input[name='address3']").val('').trigger('change');
             $(".formMain input[name='city']").val('').trigger('change');
             $(".formMain input[name='state']").val('').trigger('change');
-            $(".formMain input[name='province']").val('').trigger('change');
+            $(".formMain textarea[name='province']").val('').trigger('change');
             $(".formMain input[name='postal_code']").val('').trigger('change');
             $(".formMain select[name='country_code']").val('').trigger('change');
             $(".formMain select[name='gender']").val('').trigger('change');
@@ -6533,8 +6556,9 @@ function DispoSelectSubmit() {
                         }
                         pause_calling = 1;
                         if (dispo_check_all_pause != '1') {
-                            DispoSelectStop = false;
-                            $("#DispoSelectStop").prop('checked', false);
+                            colorLog('DispoSelectStop', 'commentout', 'debug');
+                            // DispoSelectStop = false;
+                            // $("#DispoSelectStop").prop('checked', false);
                         }
                     } else {
                         if (auto_dial_level != '0') {
@@ -6601,11 +6625,17 @@ function ManualDialSkip() {
             responsetype: 'json'
         };
 
-        window.NODIALPLEASE = 1;
+        if (window.DODIALPLEASE !== 999) {
+            window.DODIALPLEASE = 2;
+        }
+        window.DODIALPLEASEFUNC = {
+            times: 1,
+            func: 'goManualDialSkip',
+        };
 
         $.ajax({
             type: 'POST',
-            url: '<?=$goAPI?>/goAgent/goAPI.php?goManualDialSkip=' + window.NODIALPLEASE,
+            url: '<?=$goAPI?>/goAgent/goAPI.php?goManualDialSkip=' + window.DODIALPLEASE,
             processData: true,
             data: postData,
             dataType: "json",
@@ -6706,6 +6736,8 @@ function ManualDialSkip() {
             Call_Script_ID = '';
             //RefresHScript('CLEAR');
             ClearScript();
+
+            window.DODIALPLEASE = 1;
         });
     }
 }
@@ -6803,6 +6835,10 @@ function CustomerData_update() {
         postData['goCustomFields'] = custom_fields.slice(0,-1);
     }
 
+    if (window.DODIALPLEASE !== 999) {
+        window.DODIALPLEASE = 2;
+    }
+
     $.ajax({
         type: 'POST',
         url: '<?=$goAPI?>/goAgent/goAPI.php?goUpdateLead',
@@ -6814,8 +6850,6 @@ function CustomerData_update() {
         }
     })
     .done(function (result) {
-        window.NODIALPLEASE = 1;
-        
         console.log('Customer data updated...');
         
         $('.input-disabled').prop('disabled', true);
@@ -6830,6 +6864,8 @@ function CustomerData_update() {
             $(".formMain #custom_fields [id^='custom_']").prop('checked', false);
             GetCustomFields(custom_fields_list_id, true, true);
         }
+
+        window.DODIALPLEASE = 1;
     });
 }
 
@@ -7215,10 +7251,33 @@ function BasicOriginateCall(tasknum, taskprefix, taskreverse, taskdialvalue, tas
 
 
 function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnStagE, mdVendorid, mdgroupalias, mdtype) {
-    if (!window.NODIALPLEASE || window.NODIALPLEASE === 1) {
+    colorLog("START", "---------------", "info");
+    if (window.DODIALPLEASETIME) {
+        colorLog("window.DODIALPLEASETIME1", new Date().getTime(), "debug");
+        colorLog("window.DODIALPLEASETIME2", window.DODIALPLEASETIME, "debug");
+        colorLog("window.DODIALPLEASETIME3", (new Date().getTime() - window.DODIALPLEASETIME), "debug");
+        colorLog("window.DODIALPLEASEFUNC", JSON.stringify(window.DODIALPLEASEFUNC), "debug");
+        colorLog("window.DDNLoop", window.DDNLoop, "debug");
+        colorLog("window.DODIALPLEASE", $(".formMain input[name='first_name']").val(), "debug");
+        colorLog("window.DODIALPLEASERESP", JSON.stringify(window.DODIALPLEASERESP), "debug");
+        colorLog("window.DODIALPLEASEID", window.DODIALPLEASEID, "debug");
+        colorLog("ISPAUSED", $("#DispoSelectStop").is(':checked'), "debug");
+    }
+    if ((!window.DODIALPLEASE || (window.DODIALPLEASE === 1 && !window.DDNLoop) || window.DODIALPLEASE === 2) && ((!window.DODIALPLEASETIME || (new Date().getTime() - window.DODIALPLEASETIME) > 1500) || (!window.DODIALPLEASEFUNC || (window.DODIALPLEASEFUNC.times === 1 && window.DODIALPLEASEFUNC.func === 'goManualDialSkip'))) && !window.DODIALPLEASELOADING) {
+        window.DODIALPLEASELOADING = 1;
         // do nothing
+        colorLog("END", "---------------", "info");
     } else {
+        if (window.DODIALPLEASELOADING) {
+            colorLog("window.DODIALPLEASELOADING", window.DODIALPLEASELOADING, "error");
+        }
+        colorLog("window.DODIALPLEASE", window.DODIALPLEASE, "error");
+        colorLog("END", "---------------", "info");
         return;
+    }
+
+    if (window.DODIALPLEASEFUNC && window.DODIALPLEASEFUNC.times === 1) {
+        window.DODIALPLEASEFUNC.times += 1;
     }
 
     dialingINprogress = 1;
@@ -7335,14 +7394,17 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
             responsetype: 'json'
         };
         
-        if(window.NODIALPLEASE === 1) {
-            window.NODIALPLEASE = 2;
-        } else if (window.NODIALPLEASE === 0) {
-            window.NODIALPLEASE = 999;
-        }
+        const prevDODIALPLEASE = window.DODIALPLEASE;
+        // if(window.DODIALPLEASE === 1) {
+            window.DODIALPLEASE = 3;
+            window.DODIALPLEASETIME = new Date().getTime();
+        // } 
+        // else if (window.DODIALPLEASE === 0) {
+        //     window.DODIALPLEASE = 999;
+        // }
         $.ajax({
             type: 'POST',
-            url: '<?=$goAPI?>/goAgent/goAPI.php?goManualDialNext=' + window.NODIALPLEASE,
+            url: '<?=$goAPI?>/goAgent/goAPI.php?goManualDialNext=' + prevDODIALPLEASE + '&DODIALPLEASETIME=' + window.DODIALPLEASETIME,
             processData: true,
             data: postData,
             dataType: "json",
@@ -7351,6 +7413,10 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
             }
         })
         .done(function (result) {
+            window.DODIALPLEASEFUNC = false;
+            window.DODIALPLEASERESP = !window.DODIALPLEASERESP ? [result.data.lead_id] : [...window.DODIALPLEASERESP, result.data.lead_id];
+            window.DODIALPLEASEID = result.data.lead_id;
+            window.DODIALPLEASELOADING = false;
             //dialingINprogress = 0;
             //console.log(result);
 
