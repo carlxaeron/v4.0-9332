@@ -730,9 +730,9 @@ input:checked + .slider:before {
 							<?php if(SHOW_AGENT_HEADER === 'y' || ECCS_BLIND_MODE === 'y'){?>
 								<!-- ECCS Customization -->
 								<?php // if(ECCS_BLIND_MODE === 'y'){?>
-								 <div class="card-heading bg-inverse" style="background-color: black;">
+								 <div class="card-heading bg-inverse" style="background-color: black;" id="ch-header">
 								<?php //}//end if?>
-									<div class="row">
+									<div class="row" style="visibility: hidden;">
 										<div id="cust_avatar" class="col-lg-1 col-md-1 col-sm-2 text-center hidden" style="height: 64px;">
 											<avatar username="Dialed Client" src="<?php echo CRM_DEFAULTS_USER_AVATAR;?>" :size="64"></avatar>
 										</div>

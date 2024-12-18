@@ -1617,6 +1617,7 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
                     }
                 })
                 .done(function (result) {
+                    $('#ch-header > .row').attr('style', 'visibility:show;');
                     $(".preloader").fadeOut('slow');
                     $(".preloader center").html(origPreloader);
                     if (result.result != 'error') {
@@ -2472,6 +2473,7 @@ function sendLogout (logMeOut) {
         })
         .done(function (result) {
             if (result.result == 'success') {
+                $('#ch-header > .row').attr('style', 'visibility:hidden;');
                 MainPanelToFront();
                 is_logged_in = 0;
                 
@@ -2608,7 +2610,9 @@ function btnDialHangup (is_true) {
                     dialCount++;
                 }, 1000);
             } else {
+                // if (dialInterval) clearInterval(dialInterval);
                 dialInterval = setInterval(function() {
+                    colorLog('Dialing In Progress', 'red', 'debug');
                     console.log("check_inbound_call", check_inbound_call);
                     console.log("is_call_cb", is_call_cb);
                     if (!check_inbound_call && !is_call_cb || window.DDNLoop) {
@@ -2619,6 +2623,7 @@ function btnDialHangup (is_true) {
                             ManualDialNext('','','','','','0');
                         }
                             
+                        if (dialInterval) console.log('Clearing Interval', dialInterval);
                         clearInterval(dialInterval);
                         dialInterval = undefined;
                     }
@@ -2628,6 +2633,13 @@ function btnDialHangup (is_true) {
                     }
                     
                     dialCount++;
+                    colorLog('Dialing In Progress', dialCount, 'debug');
+                    if (dialCount > 10) {
+                        clearInterval(dialInterval);
+                        dialInterval = undefined;
+                        colorLog('Dialing In Progress', 'clear', 'debug');
+                        if (dialInterval) console.log('Clearing Interval', dialInterval);
+                    }
                 }, 1000);
             }
         } else {
@@ -7555,6 +7567,7 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
                     cust_email                              = thisVdata.email;
                     $(".formMain input[name='email']").val(cust_email).trigger('change');
                     $(".formMain input[name='security_phrase']").val(thisVdata.security_phrase);
+                    $('.formMain input#first_name')[0].focus();
                     var REGcommentsNL = new RegExp("!N!","g");
                     if (typeof thisVdata.comments !== 'undefined') {
                         thisVdata.comments = thisVdata.comments.replace(REGcommentsNL, "\n");
