@@ -497,6 +497,9 @@ $osTicket = $mh->moduleIsEnabled('osTicket');
 				background-color: #000 !important;
 				color: white !important;
 				border: 1px solid white !important;
+				&:focus {
+					text-decoration: underline !important;
+				}
 			}
 			#agent_tabs {
 				background-color: #000 !important;
@@ -923,7 +926,7 @@ input:checked + .slider:before {
 														</div>
 														<div class="col-sm-4">
 															<div class="mda-form-group label-floating">
-																<input readonly id="email" name="email" type="text" width="auto" value="<?php echo $email;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled>
+																<input readonly id="email" name="email" type="text" width="auto" value="<?php echo $email;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" readonly>
 																<label for="email">Email</label>
 																<!--
 																<span class="mda-input-group-addon">
@@ -940,7 +943,7 @@ input:checked + .slider:before {
 														<?php } ?>
 														<div class="col-sm-4 <?php if(ECCS_BLIND_MODE === 'y') { ?>hidden<?php } ?>">
 															<div class="mda-form-group label-floating">
-																<input id="alt_phone" name="alt_phone" type="number" min="0" maxlength="12" width="100" value="<?php echo $alt_phone;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled>
+																<input id="alt_phone" name="alt_phone" type="number" min="0" maxlength="12" width="100" value="<?php echo $alt_phone;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" readonly>
 																<label for="alt_phone"><?=$lh->translationFor('alternative_phone_number')?></label>
 															</div>
 														</div>
@@ -950,7 +953,7 @@ input:checked + .slider:before {
 													<div class="row">
 														<div class="col-sm-4">
 															<div class="mda-form-group label-floating">
-																<input id="address1" name="address1" type="text" maxlength="100" width="auto" value="<?php echo $address1;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled readonly>
+																<input id="address1" name="address1" type="text" maxlength="100" width="auto" value="<?php echo $address1;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" readonly>
 																<label for="address1">
 																	<!-- <?=$lh->translationFor('address')?> -->
 																	Lead Date
