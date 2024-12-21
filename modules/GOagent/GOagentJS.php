@@ -2391,6 +2391,10 @@ function btnLogMeIn () {
                     keyboard: false,
                     backdrop: 'static',
                     show: true
+                }).on('shown.bs.modal', function() {
+                    if($('#select_camp').is(':visible')){
+                        $('#select_camp').focus();
+                    }
                 });
                 
                 $("#select-campaign").on('hidden.bs.modal', function() {
