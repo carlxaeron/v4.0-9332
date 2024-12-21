@@ -1833,7 +1833,8 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
                         updateHotKeys();
 		        // ECCS Customization
 		        <?php if (ECCS_BLIND_MODE === "y"){ ?>
-		        $('.clickhotkey').click(function() {
+                $('.clickhotkey').css('cursor', 'default');
+		        $('.clickhotkey.enabled').click(function() {
                     if (!minimizedDispo) {
                         console.log($(this).attr('data-id'));
                         var clicked_hotkey = $(this).attr('data-id');
