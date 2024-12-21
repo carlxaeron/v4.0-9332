@@ -926,7 +926,7 @@ input:checked + .slider:before {
 														</div>
 														<div class="col-sm-4">
 															<div class="mda-form-group label-floating">
-																<input readonly id="email" name="email" type="text" width="auto" value="<?php echo $email;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" readonly>
+																<input readonly id="email" name="email" type="text" width="auto" value="<?php echo $email;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly>
 																<label for="email">Email</label>
 																<!--
 																<span class="mda-input-group-addon">
@@ -953,7 +953,7 @@ input:checked + .slider:before {
 													<div class="row">
 														<div class="col-sm-4">
 															<div class="mda-form-group label-floating">
-																<input id="address1" name="address1" type="text" maxlength="100" width="auto" value="<?php echo $address1;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" readonly>
+																<input id="address1" name="address1" type="text" maxlength="100" width="auto" value="<?php echo $address1;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly>
 																<label for="address1">
 																	<!-- <?=$lh->translationFor('address')?> -->
 																	Lead Date
@@ -1919,11 +1919,7 @@ input:checked + .slider:before {
 			<li style="padding: 0 5px 15px;">
 				<div class="material-switch pull-right">
 					<!-- make default check -->
-					<input id="LeadPreview" name="LeadPreview" value="0" type="checkbox" 
-					<?php if (ECCS_BLIND_MODE === 'y') { ?>
-						checked
-					<?php } ?>
-					/>
+					<input id="LeadPreview" name="LeadPreview" value="0" type="checkbox" />
 					<label for="LeadPreview" class="label-primary"></label>
 				</div>
 				<div  class="sidebar-toggle-labels" style="font-weight: bold; text-transform: uppercase;"><label for="LeadPreview"><?=$lh->translationFor('lead_preview')?></label></div>
