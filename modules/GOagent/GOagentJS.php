@@ -6421,16 +6421,16 @@ function DispoSelectSubmit() {
                 tmp_pn.html(' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ');
                 $("#phone_number_DISP").val('');
             }
-            $(".formMain input[name='phone_number']").val('').trigger('change');
+            $(".formMain input[name='phone_number']").trigger('change');
             $(".formMain input[name='title']").val('').trigger('change');
             //$("#cust_full_name a[id='first_name']").editable('setValue', null, true);
-            $(".formMain input[name='first_name']").val('').trigger('change');
+            $(".formMain input[name='first_name']").trigger('change');
             $("#cust_full_name a[id='first_name']").html('');
             //$("#cust_full_name a[id='middle_initial']").editable('setValue', null, true);
             $(".formMain input[name='middle_initial']").val('').trigger('change');
             $("#cust_full_name a[id='middle_initial']").html('');
             //$("#cust_full_name a[id='last_name']").editable('setValue', null, true);
-            $(".formMain input[name='last_name']").val('').trigger('change');
+            $(".formMain input[name='last_name']").trigger('change');
             $("#cust_full_name a[id='last_name']").html('');
 	    <?php
                  if(ECCS_BLIND_MODE === 'y'){
