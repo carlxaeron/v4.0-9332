@@ -750,13 +750,13 @@ input:checked + .slider:before {
 									 <span id="cust_campaign_name"></span>
 									<span id="first_name_label" class="hidden"><?=$lh->translationFor('first_name')?>: </span><a class="hidden" href="#" id="first_name"></a> <span id="middle_initial_label" class="hidden"><?=$lh->translationFor('middle_initial')?>: </span><a class="hidden" href="#" id="middle_initial"></a> <span id="last_name_label" class="hidden"><?=$lh->translationFor('last_name')?>: </span><a class="hidden" href="#" id="last_name"></a>
 									<span id="cust_call_type"></span>
-									<div class="formMain row" style="margin-top: 2rem;">
+									<!-- <div class="formMain row" style="margin-top: 2rem; display:none;">
 											<div class="col-sm-6" style="width: 60%;">
 												<div class="mda-form-group label-floating" style="padding-bottom: 0.8rem;display: flex;align-items: center;flex-flow: row-reverse;">
 													<input style="flex: 1;margin-left: 1rem;margin-top:0;" id="first_name" name="first_name" type="text" maxlength="30"  value="<?php echo $first_name;?>"
 														class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" 
 														required>
-													<label for="first_name" style="opacity: 1;position:relative;font-size: 1.5rem;margin: 0;"><?=$lh->translationFor('first_name')?> [#FN] </label>
+													<label for="first_name" style="opacity: 1;position:relative;font-size: 1.5rem;margin: 0;"><?=$lh->translationFor('first_name')?></label>
 												</div>
 											</div>
 											<div class="col-sm-4 <?php if(ECCS_BLIND_MODE === 'y') { ?>hidden<?php } ?>">
@@ -771,17 +771,17 @@ input:checked + .slider:before {
 													<input style="flex: 1;margin-left: 1rem;margin-top:0;" id="last_name" name="last_name" type="text" maxlength="30" value="<?php echo $last_name;?>"
 														class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched"
 														required>
-													<label for="last_name" style="opacity: 1;position:relative;font-size: 1.5rem;margin: 0;"><?=$lh->translationFor('last_name')?> [#LN]</label>
+													<label for="last_name" style="opacity: 1;position:relative;font-size: 1.5rem;margin: 0;"><?=$lh->translationFor('last_name')?></label>
 												</div>
 											</div>
-										</div>
+										</div> -->
 									<?php }//end if ?>
          <!-- /.ECCS Customization -->
 								</h4>
-						                <p class="ng-binding animated fadeInUpShort" style="margin-bottom: 0;">
+						                <p class="ng-binding animated fadeInUpShort" style="margin-bottom: 0;display:none;">
 									 <!-- ECCS Customization -->
                                                                         <?php if(ECCS_BLIND_MODE === 'y'){ ?> 
-										<span id="span-cust-number" class="hidden"><label for="cust_number"> Contact Number [#CN]: </label> <input type="text" id="cust_number" style="background-color:; border:; color:black; margin-top: 5px; padding-left: 5px; font-size: 14pt; font-weight: 600;" onclick="this.setSelectionRange(0, this.value.length)"/></span>
+										<span id="span-cust-number" class="hidden"><label for="cust_number"> Contact Number: </label> <input type="text" id="cust_number" style="background-color:; border:; color:black; margin-top: 5px; padding-left: 5px; font-size: 14pt; font-weight: 600;" onclick="this.setSelectionRange(0, this.value.length)"/></span>
 
 									<?php } else { ?>
                                                                         <!-- /.ECCS Customization -->
@@ -881,10 +881,10 @@ input:checked + .slider:before {
 												<div class="row">
 													<div class="col-sm-6">
 														<div class="mda-form-group label-floating" style="padding-bottom: 0.8rem;">
-															<input readonly id="first_name" name="first_name" type="text" maxlength="30"  value="<?php echo $first_name;?>"
+															<input id="first_name" name="first_name" type="text" maxlength="30"  value="<?php echo $first_name;?>"
 																class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" 
 																required>
-															<label for="first_name"><?=$lh->translationFor('first_name')?></label>
+															<label for="first_name"><?=$lh->translationFor('first_name')?> [#FN]</label>
 														</div>
 													</div>
 													<div class="col-sm-4 <?php if(ECCS_BLIND_MODE === 'y') { ?>hidden<?php } ?>">
@@ -896,10 +896,10 @@ input:checked + .slider:before {
 													</div>
 													<div class="col-sm-6">
 														<div class="mda-form-group label-floating" style="padding-bottom: 0.8rem;">
-															<input readonly id="last_name" name="last_name" type="text" maxlength="30" value="<?php echo $last_name;?>"
+															<input id="last_name" name="last_name" type="text" maxlength="30" value="<?php echo $last_name;?>"
 																class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched"
 																required>
-															<label for="last_name"><?=$lh->translationFor('last_name')?></label>
+															<label for="last_name"><?=$lh->translationFor('last_name')?> [#LN]</label>
 														</div>
 													</div>
 												</div>
@@ -912,11 +912,12 @@ input:checked + .slider:before {
 															<div class="mda-form-group label-floating">
 																<span id="phone_numberDISP" class="hidden"></span>
 																<input id="phone_code" name="phone_code" type="hidden" value="<?php echo $phone_code;?>">
-																<input readonly id="phone_number" name="phone_number" type="number" min="0" maxlength="18" width="auto" value="<?php echo $phone_number; ?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" 
+																<input id="phone_number" name="phone_number" type="number" min="0" maxlength="18" width="auto" value="<?php echo $phone_number; ?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" 
 																	required>
 																<input id="phone_number_DISP" type="number" min="0" maxlength="18" width="auto" value="" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched hidden" disabled>
 																<label for="phone_number">
-																	<?=$lh->translationFor('phone_number')?>
+																	<!-- <?=$lh->translationFor('phone_number')?> -->
+																	 Contact Number [#CN]
 																</label>
 																<!--
 																<span class="mda-input-group-addon">

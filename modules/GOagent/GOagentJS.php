@@ -6421,16 +6421,16 @@ function DispoSelectSubmit() {
                 tmp_pn.html(' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ');
                 $("#phone_number_DISP").val('');
             }
-            $(".formMain input[name='phone_number']").trigger('change');
+            $(".formMain input[name='phone_number']").val('').trigger('change');
             $(".formMain input[name='title']").val('').trigger('change');
             //$("#cust_full_name a[id='first_name']").editable('setValue', null, true);
-            $(".formMain input[name='first_name']").trigger('change');
+            $(".formMain input[name='first_name']").val('').trigger('change');
             $("#cust_full_name a[id='first_name']").html('');
             //$("#cust_full_name a[id='middle_initial']").editable('setValue', null, true);
             $(".formMain input[name='middle_initial']").val('').trigger('change');
             $("#cust_full_name a[id='middle_initial']").html('');
             //$("#cust_full_name a[id='last_name']").editable('setValue', null, true);
-            $(".formMain input[name='last_name']").trigger('change');
+            $(".formMain input[name='last_name']").val('').trigger('change');
             $("#cust_full_name a[id='last_name']").html('');
 	    <?php
                  if(ECCS_BLIND_MODE === 'y'){
@@ -6782,7 +6782,8 @@ function CustomerData_update() {
         goComments: REGcommentsRESULT,
         goVendorLeadCode: $(".formMain input[name='vendor_lead_code']").val(),
         // goPhoneNumber: $(".formMain input[name='phone_number']").val(),
-        goPhoneNumber: $("input#cust_number").val(),
+        // goPhoneNumber: $("input#cust_number").val(),
+        goPhoneNumber: $(".formMain input[name='phone_number']").val(),
         goTitle: $(".formMain input[name='title']").val(),
         //goFirstName: $("#cust_full_name a[id='first_name']").editable('getValue', true),
         //goMiddleInitial: $("#cust_full_name a[id='middle_initial']").editable('getValue', true),
@@ -7572,7 +7573,7 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
                     cust_email                              = thisVdata.email;
                     $(".formMain input[name='email']").val(cust_email).trigger('change');
                     $(".formMain input[name='security_phrase']").val(thisVdata.security_phrase);
-                    $('.formMain input#first_name')[0].focus();
+                    $('a[href="#contact_info"]').focus();
                     var REGcommentsNL = new RegExp("!N!","g");
                     if (typeof thisVdata.comments !== 'undefined') {
                         thisVdata.comments = thisVdata.comments.replace(REGcommentsNL, "\n");
