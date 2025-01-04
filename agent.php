@@ -883,7 +883,7 @@ input:checked + .slider:before {
 														<div class="mda-form-group label-floating" style="padding-bottom: 0.8rem;">
 															<input id="first_name" name="first_name" type="text" maxlength="30"  value="<?php echo $first_name;?>"
 																class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" 
-																required>
+																required readonly>
 															<label for="first_name"><?=$lh->translationFor('first_name')?> [#FN]</label>
 														</div>
 													</div>
@@ -898,7 +898,7 @@ input:checked + .slider:before {
 														<div class="mda-form-group label-floating" style="padding-bottom: 0.8rem;">
 															<input id="last_name" name="last_name" type="text" maxlength="30" value="<?php echo $last_name;?>"
 																class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched"
-																required>
+																required readonly>
 															<label for="last_name"><?=$lh->translationFor('last_name')?> [#LN]</label>
 														</div>
 													</div>
@@ -913,7 +913,7 @@ input:checked + .slider:before {
 																<span id="phone_numberDISP" class="hidden"></span>
 																<input id="phone_code" name="phone_code" type="hidden" value="<?php echo $phone_code;?>">
 																<input id="phone_number" name="phone_number" type="number" min="0" maxlength="18" width="auto" value="<?php echo $phone_number; ?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" 
-																	required>
+																	required readonly>
 																<input id="phone_number_DISP" type="number" min="0" maxlength="18" width="auto" value="" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched hidden" disabled>
 																<label for="phone_number">
 																	<!-- <?=$lh->translationFor('phone_number')?> -->

@@ -1420,6 +1420,11 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
                     } else if(e.shiftKey && e.key == "^") {
                         $("a[title='DIAL LEAD']").click();
                     }
+                // Repoint Focus to Customer Info tab using shift + ctrl + A
+                    else if(e.shiftKey && e.ctrlKey && e.key == "A") {
+                        $('[href="#contact_info"]').focus();
+                    }
+                    
                 
                 if (!hotkeysReady) {
                     setTimeout(function() {
