@@ -236,6 +236,8 @@ $osTicket = $mh->moduleIsEnabled('osTicket');
 						}
 					});
 				}
+
+				$('[href="#contact_info"]').focus();
 			});
 			
 			$(function() {

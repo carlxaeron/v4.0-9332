@@ -1420,11 +1420,32 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
                     } else if(e.shiftKey && e.key == "^") {
                         $("a[title='DIAL LEAD']").click();
                     }
-                // Repoint Focus to Customer Info tab using shift + ctrl + A
-                    else if(e.shiftKey && e.ctrlKey && e.key == "A") {
+                // Repoint Focus to Contact Info tab using shift + space
+                    else if(e.shiftKey && e.key == " ") {
                         $('[href="#contact_info"]').focus();
                     }
-                    
+                    // Repoint Focus to Contact Info tab using ctrl + space
+                    else if(e.ctrlKey && e.key == " ") {
+                        $('[href="#contact_info"]').focus();
+                    }
+                    // Repoint Focus to Contact Info tab using shift + F1 to F12 (any)
+                    else if(e.shiftKey) {
+                        if (e.key == "F1" || e.key == "F2" || e.key == "F3" || e.key == "F4" || e.key == "F5" || e.key == "F6" || e.key == "F7" || e.key == "F8" || e.key == "F9" || e.key == "F10" || e.key == "F11" || e.key == "F12") {
+                            $('[href="#contact_info"]').focus();
+                        }
+                    }
+                    // Repoint Focus to Contact Info tab using alt + F1 to F12 (any)
+                    else if(e.altKey) {
+                        if (e.key == "F1" || e.key == "F2" || e.key == "F3" || e.key == "F4" || e.key == "F5" || e.key == "F6" || e.key == "F7" || e.key == "F8" || e.key == "F9" || e.key == "F10" || e.key == "F11" || e.key == "F12") {
+                            $('[href="#contact_info"]').focus();
+                        }
+                    }
+                    // Repoint Focus to Contact Info tab using alt + shift + F1 to F12 (any)
+                    else if(e.shiftKey && e.altKey) {
+                        if (e.key == "F1" || e.key == "F2" || e.key == "F3" || e.key == "F4" || e.key == "F5" || e.key == "F6" || e.key == "F7" || e.key == "F8" || e.key == "F9" || e.key == "F10" || e.key == "F11" || e.key == "F12") {
+                            $('[href="#contact_info"]').focus();
+                        }
+                    }
                 
                 if (!hotkeysReady) {
                     setTimeout(function() {
@@ -1878,6 +1899,8 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
                         });
                         $("#scSubmit").removeClass('disabled');
                     }
+
+                    $('[href="#contact_info"]').focus();
                 })
                 .fail(function() {
                     $(".preloader").fadeOut('slow');
@@ -4847,7 +4870,7 @@ function CallBacksCountCheck() {
 
     $.ajax({
         type: 'POST',
-        url: '<?=$goAPI?>/goAgent/goAPI.php',
+        url: '<?=$goAPI?>/goAgent/goAPI.php?goGetCallbackCount',
         processData: true,
         data: postData,
         dataType: "json",
@@ -6412,6 +6435,8 @@ function DispoSelectSubmit() {
                 }
     
                 waiting_on_dispo = 0;
+
+                $('[href="#contact_info"]').focus();
             });
             
             //CLEAR ALL FORM VARIABLES
