@@ -6638,6 +6638,8 @@ function DispoSelectSubmit() {
             }
         }
     }
+
+    
 }
 
 function ManualDialSkip() {
@@ -6792,6 +6794,7 @@ function ManualDialSkip() {
 
 // ################################################################################
 // Update vicidial_list lead record with all altered values from form
+let hutimer;
 function CustomerData_update() {
     var REGcommentsAMP = new RegExp('&',"g");
     var REGcommentsQUES = new RegExp("\\?","g");
@@ -6914,6 +6917,25 @@ function CustomerData_update() {
         }
 
         window.DODIALPLEASE = 1;
+
+        if (!window.DDNLoop) {
+            if (!hutimer) {
+                hutimer = setInterval(function() {
+                    if($('#btnDialHangup[title="Dial Next Call"]').is(':visible') && !$('#btnDialHangup[title="Dial Next Call"]').is('.disabled') && !$("#DispoSelectStop").is(':checked')) {
+                            clearInterval(hutimer);
+                            hutimer = null;
+                            $('#btnDialHangup[title="Dial Next Call"]').click();
+                            colorLog('Dial Next Call clicked', 'commentout', 'debug');
+                    } else if($("#DispoSelectStop").is(':checked')) {
+                        clearInterval(hutimer);
+                        hutimer = null;
+                        colorLog('Dial Next Call clicked 2', 'commentout', 'debug');
+                    }
+                }, 1000);
+            }
+        } else {
+            if(hutimer) clearInterval(hutimer);
+        }
     });
 }
 
@@ -7462,7 +7484,7 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
         })
         .done(function (result) {
             window.DODIALPLEASEFUNC = false;
-            window.DODIALPLEASERESP = !window.DODIALPLEASERESP ? [result.data.lead_id] : [...window.DODIALPLEASERESP, result.data.lead_id];
+            window.DODIALPLEASERESP = !window.DODIALPLEASERESP ? (result.data && result.data.lead_id && [result.data.lead_id]) || [] : [...window.DODIALPLEASERESP, result.data.lead_id];
             window.DODIALPLEASEID = result.data.lead_id;
             window.DODIALPLEASELOADING = false;
             //dialingINprogress = 0;
