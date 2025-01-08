@@ -985,7 +985,7 @@ input:checked + .slider:before {
 														</div>
 														<div class="col-sm-12">
 															<div class="mda-form-group label-floating">
-																<textarea rows="10" id="comments" name="comments" maxlength="255" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea note-editor note-editor-margin" style="resize:none; width: 100%;" readonly tabindex="15"><?=$comments?></textarea>
+																<textarea rows="10" id="comments" name="comments" maxlength="255" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea note-editor note-editor-margin" style="resize:none; width: 100%;" tabindex="15"><?=$comments?></textarea>
 																<label for="comments">Remarks</label>
 															</div>
 														</div>

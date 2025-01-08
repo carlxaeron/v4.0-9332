@@ -1360,7 +1360,7 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
                 return;
             }
             
-            if (AgentDispoing < 1) {
+            if (AgentDispoing < 1 && !window.INPUTFOCUSED) {
                 // User Exit
                 if(e.shiftKey && e.key == "End"){
                     hotkeysReady = false;
@@ -1998,17 +1998,19 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
             globalSession.mute();
         }
     });
-    
-    // $("input, textarea").on('focus', function() {
-    //    if ($("#enableHotKeys").is(':checked')) {
-    //        $(document).off('keydown', 'body', hotKeysAvailable);
-    //    }
-    // });
+    window.INPUTFOCUSED = false;
+    $("input:not([readonly]), textarea:not([readonly])").on('focus', function() {
+       if ($("#enableHotKeys").is(':checked')) {
+           $(document).off('keydown', 'body', hotKeysAvailable);
+       }
+       window.INPUTFOCUSED = true;
+    });
     
     $("input, textarea").on('focusout', function() {
 	if ($("#enableHotKeys").is(':checked')) {
             $(document).on('keydown', 'body', hotKeysAvailable);
 	}
+    window.INPUTFOCUSED = false;
     });
 
     <?php if(ECCS_BLIND_MODE !== 'y'){?> 
