@@ -1420,31 +1420,9 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
                     } else if(e.shiftKey && e.key == "^") {
                         $("a[title='DIAL LEAD']").click();
                     }
-                // Repoint Focus to Contact Info tab using shift + space
-                    else if(e.shiftKey && e.key == " ") {
-                        $('[href="#contact_info"]').focus();
-                    }
                     // Repoint Focus to Contact Info tab using ctrl + space
                     else if(e.ctrlKey && e.key == " ") {
                         $('[href="#contact_info"]').focus();
-                    }
-                    // Repoint Focus to Contact Info tab using shift + F1 to F12 (any)
-                    else if(e.shiftKey) {
-                        if (e.key == "F1" || e.key == "F2" || e.key == "F3" || e.key == "F4" || e.key == "F5" || e.key == "F6" || e.key == "F7" || e.key == "F8" || e.key == "F9" || e.key == "F10" || e.key == "F11" || e.key == "F12") {
-                            $('[href="#contact_info"]').focus();
-                        }
-                    }
-                    // Repoint Focus to Contact Info tab using alt + F1 to F12 (any)
-                    else if(e.altKey) {
-                        if (e.key == "F1" || e.key == "F2" || e.key == "F3" || e.key == "F4" || e.key == "F5" || e.key == "F6" || e.key == "F7" || e.key == "F8" || e.key == "F9" || e.key == "F10" || e.key == "F11" || e.key == "F12") {
-                            $('[href="#contact_info"]').focus();
-                        }
-                    }
-                    // Repoint Focus to Contact Info tab using alt + shift + F1 to F12 (any)
-                    else if(e.shiftKey && e.altKey) {
-                        if (e.key == "F1" || e.key == "F2" || e.key == "F3" || e.key == "F4" || e.key == "F5" || e.key == "F6" || e.key == "F7" || e.key == "F8" || e.key == "F9" || e.key == "F10" || e.key == "F11" || e.key == "F12") {
-                            $('[href="#contact_info"]').focus();
-                        }
                     }
                 
                 if (!hotkeysReady) {
@@ -2021,11 +1999,11 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
         }
     });
     
-    $("input, textarea").on('focus', function() {
-        if ($("#enableHotKeys").is(':checked')) {
-            $(document).off('keydown', 'body', hotKeysAvailable);
-        }
-    });
+    // $("input, textarea").on('focus', function() {
+    //    if ($("#enableHotKeys").is(':checked')) {
+    //        $(document).off('keydown', 'body', hotKeysAvailable);
+    //    }
+    // });
     
     $("input, textarea").on('focusout', function() {
 	if ($("#enableHotKeys").is(':checked')) {
@@ -6921,12 +6899,12 @@ function CustomerData_update() {
         if (!window.DDNLoop) {
             if (!hutimer) {
                 hutimer = setInterval(function() {
-                    if($('#btnDialHangup[title="Dial Next Call"]').is(':visible') && !$('#btnDialHangup[title="Dial Next Call"]').is('.disabled') && !$("#DispoSelectStop").is(':checked')) {
+                    if(AgentDispoing < 1 && $('#btnDialHangup[title="Dial Next Call"]').is(':visible') && !$('#btnDialHangup[title="Dial Next Call"]').is('.disabled') && !$("#DispoSelectStop").is(':checked')) {
                             clearInterval(hutimer);
                             hutimer = null;
                             $('#btnDialHangup[title="Dial Next Call"]').click();
                             colorLog('Dial Next Call clicked', 'commentout', 'debug');
-                    } else if($("#DispoSelectStop").is(':checked')) {
+                    } else if(AgentDispoing < 1 && $("#DispoSelectStop").is(':checked')) {
                         clearInterval(hutimer);
                         hutimer = null;
                         colorLog('Dial Next Call clicked 2', 'commentout', 'debug');
