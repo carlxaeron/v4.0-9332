@@ -3072,6 +3072,7 @@ function toggleStatus (status) {
         case "LIVE":
             statusClass = 'livecall';
             statusLabel = '<?=$lh->translationFor('live_call')?>';
+            $('[href="#contact_info"]').focus();
             break;
         case "HANGUP":
             statusClass = 'callhangup';
