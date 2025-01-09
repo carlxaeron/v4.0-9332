@@ -1360,70 +1360,71 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
                 return;
             }
             
-            if (AgentDispoing < 1 && !window.INPUTFOCUSED) {
+            if (AgentDispoing < 1) {
                 // User Exit
                 if(e.shiftKey && e.key == "End"){
                     hotkeysReady = false;
-                      if (is_logged_in && (live_customer_call > 0 || XD_live_customer_call > 0)) {
-                          swal({
-                              title: '<?=$lh->translationFor('error')?>',
-                              text: '<?=$lh->translationFor('currently_in_call')?>',
-                              type: 'error'
-                          });
-                      } else {
+                    if (is_logged_in && (live_customer_call > 0 || XD_live_customer_call > 0)) {
+                        swal({
+                            title: '<?=$lh->translationFor('error')?>',
+                            text: '<?=$lh->translationFor('currently_in_call')?>',
+                            type: 'error'
+                        });
+                    } else {
                         //  btnLogMeOut();
                         $("#cream-agent-logout").click();
-                      }
-      
+                    }
+    
                 // Phone Log In
                 } else if(e.shiftKey && e.key == "Home") {
                     hotkeysReady = false;
-                      if (is_logged_in && ((use_webrtc && phoneRegistered) || !use_webrtc)) {
-                          swal({
-                              title: '<?=$lh->translationFor('error')?>',
-                              text: '<?=$lh->translationFor('phone_already_logged_in')?>',
-                              type: 'error'
-                          });
-                      } else {
-                          btnLogMeIn();
-                      }
-      
+                    if (is_logged_in && ((use_webrtc && phoneRegistered) || !use_webrtc)) {
+                        swal({
+                            title: '<?=$lh->translationFor('error')?>',
+                            text: '<?=$lh->translationFor('phone_already_logged_in')?>',
+                            type: 'error'
+                        });
+                    } else {
+                        btnLogMeIn();
+                    }
+    
                     // Dial or Hangup
                     } else if(e.shiftKey && e.key == "!") {
-                      hotkeysReady = false;
-                      console.log('Shift: ' + e.shiftKey, 'Key: ' + e.key);
-                      btnDialHangup();
+                    hotkeysReady = false;
+                    console.log('Shift: ' + e.shiftKey, 'Key: ' + e.key);
+                    btnDialHangup();
                         
                     // Resume or Pause
                     } else if(e.shiftKey && e.key == "@") {
-                      if (live_customer_call < 1 && dialingINprogress < 1 && !ECCS_NO_LIVE) {
-                          btnResumePause();
+                    if (live_customer_call < 1 && dialingINprogress < 1 && !ECCS_NO_LIVE) {
+                        btnResumePause();
                     }
-      
+    
                 // Open Web form
                     } else if(e.shiftKey && e.key == "#") {
-                      $("#openWebForm").click();
-      
+                    $("#openWebForm").click();
+    
                 // Toggle Lead Preview
                     } else if(e.shiftKey && e.key == "$") {
-                      $("#LeadPreview").click();
-      
+                    $("#LeadPreview").click();
+    
                 // Callbacklist
                     } else if(e.shiftKey && e.key == "%") {
-                      if ($("#loaded-contents").is(':visible')) {
-                          MainPanelToFront();
-                      } else {
-                          $("a[href='#callbackslist']").click();
-                      }
+                    if ($("#loaded-contents").is(':visible')) {
+                        MainPanelToFront();
+                    } else {
+                        $("a[href='#callbackslist']").click();
+                    }
 
                 // Dial Lead
                     } else if(e.shiftKey && e.key == "^") {
                         $("a[title='DIAL LEAD']").click();
                     }
-                    // Repoint Focus to Contact Info tab using ctrl + space
-                    else if(e.ctrlKey && e.key == " ") {
-                        $('[href="#contact_info"]').focus();
-                    }
+
+                // Repoint Focus to Contact Info tab using ctrl + space
+                if(e.ctrlKey && e.key == " ") {
+                    $('[href="#contact_info"]').focus();
+                }
                 
                 if (!hotkeysReady) {
                     setTimeout(function() {
@@ -1999,10 +2000,10 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
         }
     });
     window.INPUTFOCUSED = false;
-    $("input:not([readonly]), textarea:not([readonly])").on('focus', function() {
-       if ($("#enableHotKeys").is(':checked')) {
-           $(document).off('keydown', 'body', hotKeysAvailable);
-       }
+    $("input, textarea").on('focus', function() {
+    //   if ($("#enableHotKeys").is(':checked')) {
+    //       $(document).off('keydown', 'body', hotKeysAvailable);
+    //   }
        window.INPUTFOCUSED = true;
     });
     
@@ -2778,6 +2779,10 @@ function triggerHotkey(hotKeyId){
 // /.ECCS Customization
 
 function hotKeysAvailable(e) {
+    if (window.INPUTFOCUSED && !e.ctrlKey) {
+        return;
+    }
+
     if (hotkeys[e.key] === undefined) {
         return;
     }
