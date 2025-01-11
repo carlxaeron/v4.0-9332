@@ -1423,7 +1423,7 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
 
                 // Repoint Focus to Contact Info tab using ctrl + space
                 if(e.ctrlKey && e.key == " ") {
-                    $('[href="#contact_info"]').focus();
+                    refocus();
                 }
                 
                 if (!hotkeysReady) {
@@ -1879,7 +1879,7 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
                         $("#scSubmit").removeClass('disabled');
                     }
 
-                    $('[href="#contact_info"]').focus();
+                    refocus();
                 })
                 .fail(function() {
                     $(".preloader").fadeOut('slow');
@@ -3061,6 +3061,10 @@ function updateButtons () {
     }
 }
 
+function refocus() {
+    $('[href="#contact_info"]').focus();
+}
+
 function toggleStatus (status) {
     var statusClass = '';
     var statusLabel = '';
@@ -3072,7 +3076,7 @@ function toggleStatus (status) {
         case "LIVE":
             statusClass = 'livecall';
             statusLabel = '<?=$lh->translationFor('live_call')?>';
-            $('[href="#contact_info"]').focus();
+            refocus();
             break;
         case "HANGUP":
             statusClass = 'callhangup';
@@ -5654,7 +5658,27 @@ function ManualDialCheckChannel(taskCheckOR) {
 		MD_dial_timed_out = 1;
         
         $("#MainStatusSpan").html('&nbsp;');
-        swal("<?=$lh->translationFor('dial_timeout')?>.");
+        alert("<?=$lh->translationFor('dial_timeout')?>.");
+        // swal("<?=$lh->translationFor('dial_timeout')?>.");
+// 
+        // let tempTmr;
+        // tempTmr = setInterval(function() {
+        //     if($(".sweet-alert.visible").length > 0) {
+        //         let tmr2;
+        //         let focusCnt = 0;
+        //         tmr2 = setInterval(function() {
+        //             $(".sweet-alert.visible button.confirm").focus();
+        //             focusCnt++;
+        //             if ($(".sweet-alert.visible button.confirm").is(':focus') && focusCnt > 3) {
+        //                 focusCnt = 0;
+        //                 clearInterval(tmr2); 
+        //                 colorLog("FocusConfirm", "Line #: <?=__LINE__?>");
+        //             }
+        //         }, 500);
+        //         colorLog("DialTimeout", "Line #: <?=__LINE__?>");
+        //         clearInterval(tempTmr);
+        //     }
+        // }, 500);
 
         if (taskCheckOR == 'YES') {
             toggleButton('DialWithCustomer', 'on');
@@ -6313,7 +6337,8 @@ function DispoSelectSubmit() {
     var DispoChoice = $("#DispoSelection").val().toString();
 
     if (DispoChoice.length < 1) {
-     	swal("<?=$lh->translationFor('must_select_disposition')?>.");
+     	// swal("<?=$lh->translationFor('must_select_disposition')?>.");
+        alert("<?=$lh->translationFor('must_select_disposition')?>.");
         //console.log("Dispo Choice: Must select disposition.");
     } else {
         if ($("#DialALTPhone").is(':checked') == true) {
@@ -6422,7 +6447,7 @@ function DispoSelectSubmit() {
     
                 waiting_on_dispo = 0;
 
-                $('[href="#contact_info"]').focus();
+                refocus();
             });
             
             //CLEAR ALL FORM VARIABLES
@@ -6907,16 +6932,18 @@ function CustomerData_update() {
         if (!window.DDNLoop) {
             if (!hutimer) {
                 hutimer = setInterval(function() {
-                    if(AgentDispoing < 1 && $('#btnDialHangup[title="Dial Next Call"]').is(':visible') && !$('#btnDialHangup[title="Dial Next Call"]').is('.disabled') && !$("#DispoSelectStop").is(':checked')) {
+                    const isPass = $(".sweet-alert.visible").length === 0 && AgentDispoing < 1;
+                    if(isPass && $('#btnDialHangup[title="Dial Next Call"]').is(':visible') && !$('#btnDialHangup[title="Dial Next Call"]').is('.disabled') && !$("#DispoSelectStop").is(':checked')) {
                             clearInterval(hutimer);
                             hutimer = null;
                             $('#btnDialHangup[title="Dial Next Call"]').click();
                             colorLog('Dial Next Call clicked', 'commentout', 'debug');
-                    } else if(AgentDispoing < 1 && $("#DispoSelectStop").is(':checked')) {
+                    } else if(isPass && $("#DispoSelectStop").is(':checked')) {
                         clearInterval(hutimer);
                         hutimer = null;
                         colorLog('Dial Next Call clicked 2', 'commentout', 'debug');
                     }
+                    colorLog('hutimer', hutimer, 'debug');
                 }, 1000);
             }
         } else {
@@ -7309,6 +7336,7 @@ function BasicOriginateCall(tasknum, taskprefix, taskreverse, taskdialvalue, tas
 function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnStagE, mdVendorid, mdgroupalias, mdtype) {
     colorLog("START", "---------------", "info");
     if (window.DODIALPLEASETIME) {
+        colorLog("window.DODIALPLEASETIME123", dialingINprogress, "debug");
         colorLog("window.DODIALPLEASETIME1", new Date().getTime(), "debug");
         colorLog("window.DODIALPLEASETIME2", window.DODIALPLEASETIME, "debug");
         colorLog("window.DODIALPLEASETIME3", (new Date().getTime() - window.DODIALPLEASETIME), "debug");
@@ -7319,7 +7347,7 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
         colorLog("window.DODIALPLEASEID", window.DODIALPLEASEID, "debug");
         colorLog("ISPAUSED", $("#DispoSelectStop").is(':checked'), "debug");
     }
-    if ((!window.DODIALPLEASE || (window.DODIALPLEASE === 1 && !window.DDNLoop) || window.DODIALPLEASE === 2) && ((!window.DODIALPLEASETIME || (new Date().getTime() - window.DODIALPLEASETIME) > 1500) || (!window.DODIALPLEASEFUNC || (window.DODIALPLEASEFUNC.times === 1 && window.DODIALPLEASEFUNC.func === 'goManualDialSkip'))) && !window.DODIALPLEASELOADING) {
+    if ((!window.DODIALPLEASE || (window.DODIALPLEASE === 1 && !window.DDNLoop) || window.DODIALPLEASE === 2) && ((!window.DODIALPLEASETIME || (new Date().getTime() - window.DODIALPLEASETIME) > 1500) || (!window.DODIALPLEASEFUNC || (window.DODIALPLEASEFUNC.times === 1 && window.DODIALPLEASEFUNC.func === 'goManualDialSkip'))) && !window.DODIALPLEASELOADING && dialingINprogress !== 1) {
         window.DODIALPLEASELOADING = 1;
         // do nothing
         colorLog("END", "---------------", "info");
