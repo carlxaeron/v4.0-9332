@@ -2779,7 +2779,7 @@ function triggerHotkey(hotKeyId){
 // /.ECCS Customization
 
 function hotKeysAvailable(e) {
-    if (window.INPUTFOCUSED && !e.ctrlKey) {
+    if (window.INPUTFOCUSED) {
         return;
     }
 
@@ -6202,6 +6202,14 @@ function DialedCallHangup(dispowindow, hotkeysused, altdispo, nodeletevdac) {
 
 
 function DispoSelectBox() {
+    const SUBMITDISPOtimer = new Date().getTime();
+    const SUBMITDISPOtimer2 = window.SUBMITDISPO ? window.SUBMITDISPO : 0;
+    colorLog('SUBMITDISPO', SUBMITDISPOtimer + ' - ' + SUBMITDISPOtimer2, 'debug');
+    const isSUBMITDISPO = window.SUBMITDISPO && (SUBMITDISPOtimer - SUBMITDISPOtimer2) < 5000;
+    if (isSUBMITDISPO) {
+        colorLog('window.SUBMITDISPO reject', (new Date().getTime() - window.SUBMITDISPO), 'debug');
+        return;
+    }
     $("#select-disposition").modal({
         keyboard: false,
         backdrop: 'static'
@@ -6419,6 +6427,8 @@ function DispoSelectSubmit() {
                 }
             })
             .done(function (result) {
+                colorLog('window.SUBMITDISPO', window.SUBMITDISPO, 'debug');
+                window.SUBMITDISPO = new Date().getTime();
                 if(
                     DispoChoice === 'CBHOLD'
                     // && !$("#DispoSelectStop").is(':checked')
@@ -6433,7 +6443,8 @@ function DispoSelectSubmit() {
                         agent_log_id = result.data.agent_log_id;
                     } else {
                         dispo_error++;
-                        swal('<?=$lh->translationFor('dispo_leadid_not_valid')?>');
+                        // swal('<?=$lh->translationFor('dispo_leadid_not_valid')?>');
+                        alert('<?=$lh->translationFor('dispo_leadid_not_valid')?>');
                     }
                 }
                 

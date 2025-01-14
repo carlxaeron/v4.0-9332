@@ -808,7 +808,7 @@ input:checked + .slider:before {
 									  <ul id="agent_tablist" role="tablist" class="nav nav-tabs nav-justified">
 									  <!-- Nav task panel tabs-->
 										 <li role="presentation" class="active">
-											<a href="#contact_info" aria-controls="home" role="tab" data-toggle="tab" class="bb0" tabindex="5">
+											<a href="#contact_info" aria-controls="home" role="tab" data-toggle="tab" class="bb0">
 												<span style="font-family:Arial; font-style:Bold;" class="fa fa-user hidden"></span>
 												<?=$lh->translationFor('contact_information')?></a>
 										 </li>
@@ -820,7 +820,7 @@ input:checked + .slider:before {
 										 </li>
 										 <?php } ?>
 										 <li role="presentation">
-											<a href="#scripts" aria-controls="home" role="tab" data-toggle="tab" class="bb0" tabindex="6">
+											<a href="#scripts" aria-controls="home" role="tab" data-toggle="tab" class="bb0">
 												<span class="fa fa-file-text-o hidden"></span>
 												<?=$lh->translationFor('script')?></a>
 										 </li>
@@ -886,7 +886,7 @@ input:checked + .slider:before {
 														<div class="mda-form-group label-floating" style="padding-bottom: 0.8rem;">
 															<input id="first_name" name="first_name" type="text" maxlength="30"  value="<?php echo $first_name;?>"
 																class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" 
-																required readonly tabindex="7">
+																required readonly>
 															<label for="first_name"><?=$lh->translationFor('first_name')?> [#FN]</label>
 														</div>
 													</div>
@@ -901,7 +901,7 @@ input:checked + .slider:before {
 														<div class="mda-form-group label-floating" style="padding-bottom: 0.8rem;">
 															<input id="last_name" name="last_name" type="text" maxlength="30" value="<?php echo $last_name;?>"
 																class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched"
-																required readonly tabindex="8">
+																required readonly>
 															<label for="last_name"><?=$lh->translationFor('last_name')?> [#LN]</label>
 														</div>
 													</div>
@@ -916,7 +916,7 @@ input:checked + .slider:before {
 																<span id="phone_numberDISP" class="hidden"></span>
 																<input id="phone_code" name="phone_code" type="hidden" value="<?php echo $phone_code;?>">
 																<input id="phone_number" name="phone_number" type="text" min="0" maxlength="18" width="auto" value="<?php echo $phone_number; ?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" 
-																	required readonly tabindex="9">
+																	required readonly>
 																<input id="phone_number_DISP" type="number" min="0" maxlength="18" width="auto" value="" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched hidden" disabled>
 																<label for="phone_number">
 																	<!-- <?=$lh->translationFor('phone_number')?> -->
@@ -930,7 +930,7 @@ input:checked + .slider:before {
 														</div>
 														<div class="col-sm-4">
 															<div class="mda-form-group label-floating">
-																<input readonly id="email" name="email" type="text" width="auto" value="<?php echo $email;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly tabindex="9">
+																<input readonly id="email" name="email" type="text" width="auto" value="<?php echo $email;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly>
 																<label for="email">Email</label>
 																<!--
 																<span class="mda-input-group-addon">
@@ -940,7 +940,7 @@ input:checked + .slider:before {
 														</div>
 														<?php if(ECCS_BLIND_MODE === 'y') { ?>
 														<div class="col-sm-4">																				<div class="mda-form-group label-floating">
-																<input id="vendor_lead_code" name="vendor_lead_code" type="text" maxlength="100" value="<?php echo $vendor_lead_code;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly tabindex="10">
+																<input id="vendor_lead_code" name="vendor_lead_code" type="text" maxlength="100" value="<?php echo $vendor_lead_code;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly>
 																<label for="vendor_lead_code">Lead Source</label>
 															</div>
 														</div>
@@ -957,7 +957,7 @@ input:checked + .slider:before {
 													<div class="row">
 														<div class="col-sm-4">
 															<div class="mda-form-group label-floating">
-																<input id="address1" name="address1" type="text" maxlength="100" width="auto" value="<?php echo $address1;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly tabindex="11">
+																<input id="address1" name="address1" type="text" maxlength="100" width="auto" value="<?php echo $address1;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly>
 																<label for="address1">
 																	<!-- <?=$lh->translationFor('address')?> -->
 																	Lead Date
@@ -968,24 +968,24 @@ input:checked + .slider:before {
 														</span>-->
 														</div>
 														<div class="col-sm-4">																				<div class="mda-form-group label-floating">
-																<input id="address2" name="address2" type="text" maxlength="100" value="<?php echo $address2;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly tabindex="12">
+																<input id="address2" name="address2" type="text" maxlength="100" value="<?php echo $address2;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly>
 																<label for="address2">DNC Expiry</label>
 															</div>
 														</div>
 														<div class="col-sm-4">																				<div class="mda-form-group label-floating">
-																<input id="address3" name="address3" type="text" maxlength="100" value="<?php echo $address3;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly tabindex="13">
+																<input id="address3" name="address3" type="text" maxlength="100" value="<?php echo $address3;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly>
 																<label for="address3">DNC Info</label>
 															</div>
 														</div>
 														<div class="col-sm-12">
 															<div class="mda-form-group label-floating">
-																<textarea rows="3" id="province" name="province" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea note-editor note-editor-margin" style="resize:none; width: 100%;font-size: 16pt;font-weight: 700;" readonly tabindex="14"></textarea>
+																<textarea rows="3" id="province" name="province" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea note-editor note-editor-margin" style="resize:none; width: 100%;font-size: 16pt;font-weight: 700;" readonly></textarea>
 																<label for="province">Other Info</label>
 															</div>
 														</div>
 														<div class="col-sm-12">
 															<div class="mda-form-group label-floating">
-																<textarea rows="10" id="comments" name="comments" maxlength="255" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea note-editor note-editor-margin" style="resize:none; width: 100%;" tabindex="15"><?=$comments?></textarea>
+																<textarea rows="10" id="comments" name="comments" maxlength="255" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea note-editor note-editor-margin" style="resize:none; width: 100%;"><?=$comments?></textarea>
 																<label for="comments">Remarks</label>
 															</div>
 														</div>
@@ -1884,10 +1884,10 @@ input:checked + .slider:before {
   <aside class="control-sidebar control-sidebar-dark">
     <!-- Create the tabs -->
     <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
-      <li id="dialer-tab" class="active"><a href="#control-sidebar-dialer-tab" data-toggle="tab" tabindex="16"><i class="fa fa-phone"></i></a></li>
+      <li id="dialer-tab" class="active"><a href="#control-sidebar-dialer-tab" data-toggle="tab"><i class="fa fa-phone"></i></a></li>
       <?php if($agent_chat_status) echo '<li id="chat-tab"><a href="#control-sidebar-chat-tab" data-toggle="tab"><i class="fa fa-comments-o"></i></a></li>'; ?> 
-      <li id="agents-tab" class="hidden"><a href="#control-sidebar-users-tab" data-toggle="tab" tabindex="17"><i class="fa fa-users"></i></a></li>
-      <li id="settings-tab"><a href="#control-sidebar-settings-tab" data-toggle="tab" tabindex="18"><i class="fa fa-user"></i></a></li>
+      <li id="agents-tab" class="hidden"><a href="#control-sidebar-users-tab" data-toggle="tab"><i class="fa fa-users"></i></a></li>
+      <li id="settings-tab"><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-user"></i></a></li>
     </ul>
     <!-- Tab panes -->
     <div class="tab-content" style="border-width:0; overflow-y: auto;">
@@ -3026,7 +3026,7 @@ dding-top: 10px;">
                                 $('#agent_tablist li:nth-of-type(3)>a.bb0').attr("title", "<?=$lh->translationFor('script')?>");
 
 				// Hastag Formats
-				$('header.main-header a.logo').append("<label for='logo-home' id='hash-home'>#HOME</label>").attr('tabindex', '1');
+				$('header.main-header a.logo').append("<label for='logo-home' id='hash-home'>#HOME</label>");
 				$('button#btnLogMeIn').append(" [#LI] ");
 				$('button#btnLogMeOut').append(" [#LP] ");
 				
@@ -3052,10 +3052,10 @@ dding-top: 10px;">
                 	        $('form#contact_details_form label[for="comments"]').append(" [#RM] ");
         	                // $('form#gender_form label[for="call_notes"]').append(" [#CN] ");
 
-				$("[data-toggle='control-sidebar']").append("<br><span>#CONF</span>").attr('tabindex', '4');
+				$("[data-toggle='control-sidebar']").append("<br><span>#CONF</span>");
 
-				$('li#topbar-callbacks a.dropdown-toggle').append('<span class="sr-only">Callbacks</span><span>&nbsp; #CB</span>').attr('tabindex', '2');
-				$('li.dropdown.messages-menu a.dropdown-toggle').append('<br><span class="sr-only">Messages</span><span>#VM</span>').attr('tabindex', '3');
+				$('li#topbar-callbacks a.dropdown-toggle').append('<span class="sr-only">Callbacks</span><span>&nbsp; #CB</span>');
+				$('li.dropdown.messages-menu a.dropdown-toggle').append('<br><span class="sr-only">Messages</span><span>#VM</span>');
 
 				$('button#btnDialHangup').append('<br><span id="hash-dial-hangup"></span>');
                                 $('button#btnResumePause').append('<br><span>#PR</span>');
