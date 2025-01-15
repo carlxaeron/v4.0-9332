@@ -542,7 +542,11 @@ var refreshId = setInterval(function() {
             //    $("#GENDERhideFORieALT").html('<select size="1" name="gender_list" class="cust_form" id="gender_list"><option value="U">U - <?=$lh->translationFor('undefined')?></option><option value="M">M - <?=$lh->translationFor('male')?></option><option value="F">F - <?=$lh->translationFor('female')?></option></select>');
             //}
     
-            DispoSelectBox();
+            if(!window.UPDATELEADERROR) {
+                DispoSelectBox();
+            } else {
+                window.UPDATELEADERROR = false;
+            }
             //DispoSelectContent_create('','ReSET');
             WaitingForNextStep = 1;
             open_dispo_screen = 0;
@@ -6809,6 +6813,9 @@ function ManualDialSkip() {
             ClearScript();
 
             window.DODIALPLEASE = 1;
+
+            
+            huTimerPatch();
         });
     }
 }
@@ -6817,6 +6824,29 @@ function ManualDialSkip() {
 // ################################################################################
 // Update vicidial_list lead record with all altered values from form
 let hutimer;
+function huTimerPatch() {
+    if (!window.DDNLoop) {
+        if (!hutimer) {
+            hutimer = setInterval(function() {
+                const isPass = $(".sweet-alert.visible").length === 0 && AgentDispoing < 1;
+                if(isPass && $('#btnDialHangup[title="Dial Next Call"]').is(':visible') && !$('#btnDialHangup[title="Dial Next Call"]').is('.disabled') && !$("#DispoSelectStop").is(':checked')) {
+                        clearInterval(hutimer);
+                        hutimer = null;
+                        $('#btnDialHangup[title="Dial Next Call"]').click();
+                        colorLog('Dial Next Call clicked', 'commentout', 'debug');
+                } else if(isPass && $("#DispoSelectStop").is(':checked')) {
+                    clearInterval(hutimer);
+                    hutimer = null;
+                    colorLog('Dial Next Call clicked 2', 'commentout', 'debug');
+                }
+                colorLog('hutimer', hutimer, 'debug');
+            }, 1000);
+        }
+    } else {
+        if(hutimer) clearInterval(hutimer);
+    }
+}
+
 function CustomerData_update() {
     var REGcommentsAMP = new RegExp('&',"g");
     var REGcommentsQUES = new RegExp("\\?","g");
@@ -6924,6 +6954,7 @@ function CustomerData_update() {
     })
     .done(function (result) {
         console.log('Customer data updated...');
+        if (result.result === 'error') window.UPDATELEADERROR = true;
         
         $('.input-disabled').prop('disabled', true);
         $('.input-phone-disabled').prop('disabled', true);
@@ -6940,26 +6971,7 @@ function CustomerData_update() {
 
         window.DODIALPLEASE = 1;
 
-        if (!window.DDNLoop) {
-            if (!hutimer) {
-                hutimer = setInterval(function() {
-                    const isPass = $(".sweet-alert.visible").length === 0 && AgentDispoing < 1;
-                    if(isPass && $('#btnDialHangup[title="Dial Next Call"]').is(':visible') && !$('#btnDialHangup[title="Dial Next Call"]').is('.disabled') && !$("#DispoSelectStop").is(':checked')) {
-                            clearInterval(hutimer);
-                            hutimer = null;
-                            $('#btnDialHangup[title="Dial Next Call"]').click();
-                            colorLog('Dial Next Call clicked', 'commentout', 'debug');
-                    } else if(isPass && $("#DispoSelectStop").is(':checked')) {
-                        clearInterval(hutimer);
-                        hutimer = null;
-                        colorLog('Dial Next Call clicked 2', 'commentout', 'debug');
-                    }
-                    colorLog('hutimer', hutimer, 'debug');
-                }, 1000);
-            }
-        } else {
-            if(hutimer) clearInterval(hutimer);
-        }
+        huTimerPatch();
     });
 }
 
