@@ -6327,6 +6327,11 @@ function DispoSelectContent_create(taskDSgrp,taskDSstage) {
 
 
 function DispoSelectSubmit() {
+    if (window.UPDATELEADERRORSUBMIT) {
+        window.UPDATELEADERRORSUBMIT = false;
+        return;
+    }
+
     if (VDCL_group_id.length > 1) {var group = VDCL_group_id;}
     else {var group = campaign;}
 
@@ -6825,7 +6830,7 @@ function ManualDialSkip() {
 // Update vicidial_list lead record with all altered values from form
 let hutimer;
 function huTimerPatch() {
-    if (!window.DDNLoop) {
+    // if (!window.DDNLoop) {
         if (!hutimer) {
             hutimer = setInterval(function() {
                 const isPass = $(".sweet-alert.visible").length === 0 && AgentDispoing < 1;
@@ -6840,11 +6845,22 @@ function huTimerPatch() {
                     colorLog('Dial Next Call clicked 2', 'commentout', 'debug');
                 }
                 colorLog('hutimer', hutimer, 'debug');
+                if(window.UPDATELEADERROR && $("#select-disposition").is(':visible')) { 
+                    console.log('close natin');
+                    // $('#select-disposition').modal('hide');
+                    // clearInterval(hutimer);
+                    // hutimer = null;
+                    // window.UPDATELEADERROR = false;
+                    // $('#btnDialHangup[title="Dial Next Call"]').click();
+                    window.UPDATELEADERRORSUBMIT = true;
+                    $('#DispoSelectContent *[id^="dispo-"]')[0].click();
+                    $('#btn-dispo-submit').click();
+                }
             }, 1000);
         }
-    } else {
-        if(hutimer) clearInterval(hutimer);
-    }
+    // } else {
+    //     if(hutimer) clearInterval(hutimer);
+    // }
 }
 
 function CustomerData_update() {
