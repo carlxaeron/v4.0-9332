@@ -236,6 +236,8 @@ $osTicket = $mh->moduleIsEnabled('osTicket');
 						}
 					});
 				}
+
+				$('[href="#contact_info"]').focus();
 			});
 			
 			$(function() {
@@ -472,6 +474,70 @@ $osTicket = $mh->moduleIsEnabled('osTicket');
 			.editable-disabled {
 					color: #fff !important;
 			}
+
+			#cust_info {
+				background-color: #000;
+			}
+			#popup-hotkeys {
+				background-color: #000;
+				color: white;
+			}
+			#popup-hotkeys .panel-footer {
+				background-color: #000;
+			}
+			#popup-hotkeys .panel-footer .sidecolor {
+				color: white;
+			}
+			#popup-hotkeys .panel-body a:link, #popup-hotkeys .panel-body a:visited, #popup-hotkeys .panel-body a:hover, #popup-hotkeys .panel-body a:active, #popup-hotkeys dt.text-primary, #popup-hotkeys dd {
+				color: white !important;
+			}
+			#cust_info ul#agent_tablist > li.active > a {
+				background-color: #1c1c1c !important;
+				color: white !important;
+			}
+			#cust_info ul#agent_tablist > li > a {
+				background-color: #000 !important;
+				color: white !important;
+				border: 1px solid white !important;
+				&:focus {
+					text-decoration: underline !important;
+				}
+			}
+			#agent_tabs {
+				background-color: #000 !important;
+				color: white !important;
+				border: none;
+				margin-top: 1rem;
+				padding: 0;
+			}
+			#contact_info label, #comments label, #custom_form label {
+				color: white !important;
+			}
+			#cust_info input, #cust_info select, #cust_info textarea {
+				color: #efefef !important;
+				border: 1px solid white !important;
+				margin-top: 1rem;
+				border-radius: 3px;
+				background-color: #000 !important;
+				background-image: none;
+				padding: 1rem;
+			}
+			#cust_info .select2-container--bootstrap.select2-container--disabled .select2-selection, #cust_info .select2-container--bootstrap.select2-container--disabled .select2-selection--multiple .select2-selection__choice {
+				background-color: #000 !important;
+				border: 1px solid white !important;
+				color: #efefef !important;
+				margin-top: 1rem;
+			}
+			#cust_info .select2-selection__rendered {
+				color: #000 !important;
+			}
+			#cust_info #contact_info label {
+				font-size: 16pt;
+				opacity: 1;
+			}
+			[title="DIAL LEAD"]:focus, [title="SKIP LEAD"]:focus {
+				text-decoration: underline !important;
+			}
 	</style>
 
 	<!-- ECCS Customiztion -->
@@ -635,20 +701,23 @@ input:checked + .slider:before {
 			<div class="col-lg-3">
 			<?php } ?>
 				<div id="popup-hotkeys" class="panel clearfix">
-				<div class="panel-heading"><b><?=$lh->translationFor('hotkeys')?></b></div>
+				<div class="panel-heading" style="border: 3px solid white;"><b><?=$lh->translationFor('hotkeys')?></b></div>
 					<div class="panel-body"><?=$lh->translationFor('no_available_hotkeys')?></div>
+					<div class="panel-heading" style="border: 3px solid white;"><b>Short Cut Keys</b></div>
 						<div class="panel-footer clearfix">
-							<div class="text-danger sidecolor" style="padding-right: 5px; background-color: inherit;">
+							<div class="text-danger sidecolor" style="padding-right: 5px; background-color: inherit;margin-top:0.8rem;">
 								<?php if(ECCS_BLIND_MODE === 'n'){ ?>
 								<small><b><?=$lh->translationFor('note')?>:</b> <?=$lh->translationFor('hotkeys_note')?></small>
 								<?php } else { ?>
-								<small id="" style="" class="">Login to Phone Dialer [Shift + Home]</small><br>
-								<small id"" style="" class="">Shortcut Keys to Exit [Shift + End]</small><br>
-								<small id"" style="" class="">Shortcut Keys to Dial/Hangup [Shift + 1]</small><br>
-								<small id"" style="" class="">Shortcut Keys to Pause/Resume [Shift + 2]</small><br>
-								<small id"" style="" class="">Shortcut Keys to Open Webform [Shift + 3]</small><br>
-								<small id"" style="" class="">Shortcut Keys to Lead Preview [Shift + 4]</small><br>
-								<small id"" style="" class="">Shortcut Keys to Callback List [Shift + 5]</small>
+								<small id="" style="" class="">Login [Shift + Home]</small><br/>
+								<small id"" style="" class="">Logout[Shift + End]</small><br/>
+								<small id="" style="" class="">Contact Info [Ctrl + Space]</small><br/><br/>
+								<small id"" style="" class="">Dial/Hangup [Shift + 1]</small><br/>
+								<small id"" style="" class="">Pause/Resume [Shift + 2]</small><br/>
+								<small id"" style="" class="">Open Webform [Shift + 3]</small><br/>
+								<small id"" style="" class="">Lead Preview [Shift + 4]</small><br/>
+								<small id"" style="" class="">Callback List [Shift + 5]</small><br/>
+								<small id"" style="" class="">Dial Lead [Shift + 6]</small>
 								<?php } ?>
 							</div>
 						</div>
@@ -664,16 +733,16 @@ input:checked + .slider:before {
 					<!-- standard custom edition form -->
 					<div class="container-custom ng-scope">
 						<div id="cust_info" class="card">
-							<?php if(SHOW_AGENT_HEADER === 'y'){?>
+							<?php if(SHOW_AGENT_HEADER === 'y' || ECCS_BLIND_MODE === 'y'){?>
 								<!-- ECCS Customization -->
 								<?php // if(ECCS_BLIND_MODE === 'y'){?>
-								 <div style="background-image:;" class="card-heading bg-inverse">
+								 <div class="card-heading bg-inverse" style="background-color: black;" id="ch-header">
 								<?php //}//end if?>
-									<div class="row">
-										<div id="cust_avatar" class="col-lg-1 col-md-1 col-sm-2 text-center hidden-xs" style="height: 64px;">
+									<div class="row" style="visibility: hidden;">
+										<div id="cust_avatar" class="col-lg-1 col-md-1 col-sm-2 text-center hidden" style="height: 64px;">
 											<avatar username="Dialed Client" src="<?php echo CRM_DEFAULTS_USER_AVATAR;?>" :size="64"></avatar>
 										</div>
-										<div class="<?php if (ECCS_BLIND_MODE === 'n') { echo "col-lg-9 col-md-9 col-sm-7"; } else { echo "col-lg-11 col-md-11 col-sm-10"; } ?>">
+										<div class="<?php if (ECCS_BLIND_MODE === 'n') { echo "col-lg-9 col-md-9 col-sm-7"; } else { echo "col-lg-11- col-md-11- col-sm-10- col-xs-12"; } ?>">
 								<!-- ECCS Customization-->
 						   <h4 id="cust_full_name" class="isDisabled">
 									<?php if(ECCS_BLIND_MODE === 'n'){ ?>
@@ -682,15 +751,40 @@ input:checked + .slider:before {
 									<!-- ECCS Customization -->
 									<?php if(ECCS_BLIND_MODE === 'y'){ ?>
 									 <span id="cust_campaign_name"></span>
-									<span id="first_name_label" class="hidden"><?=$lh->translationFor('first_name')?>: </span><a href="#" id="first_name"></a> <span id="middle_initial_label" class="hidden"><?=$lh->translationFor('middle_initial')?>: </span><a href="#" id="middle_initial"></a> <span id="last_name_label" class="hidden"><?=$lh->translationFor('last_name')?>: </span><a href="#" id="last_name"></a>
+									<span id="first_name_label" class="hidden"><?=$lh->translationFor('first_name')?>: </span><a class="hidden" href="#" id="first_name"></a> <span id="middle_initial_label" class="hidden"><?=$lh->translationFor('middle_initial')?>: </span><a class="hidden" href="#" id="middle_initial"></a> <span id="last_name_label" class="hidden"><?=$lh->translationFor('last_name')?>: </span><a class="hidden" href="#" id="last_name"></a>
 									<span id="cust_call_type"></span>
+									<!-- <div class="formMain row" style="margin-top: 2rem; display:none;">
+											<div class="col-sm-6" style="width: 60%;">
+												<div class="mda-form-group label-floating" style="padding-bottom: 0.8rem;display: flex;align-items: center;flex-flow: row-reverse;">
+													<input style="flex: 1;margin-left: 1rem;margin-top:0;" id="first_name" name="first_name" type="text" maxlength="30"  value="<?php echo $first_name;?>"
+														class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" 
+														required>
+													<label for="first_name" style="opacity: 1;position:relative;font-size: 1.5rem;margin: 0;"><?=$lh->translationFor('first_name')?></label>
+												</div>
+											</div>
+											<div class="col-sm-4 <?php if(ECCS_BLIND_MODE === 'y') { ?>hidden<?php } ?>">
+												<div class="mda-form-group label-floating" style="padding-bottom: 0.8rem;">
+													<input id="middle_initial" name="middle_initial" type="text" maxlength="1" value="<?php echo $middle_initial;?>"
+														class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled>
+													<label for="middle_initial"><?=$lh->translationFor('middle_initial')?></label>
+												</div>
+											</div>
+											<div class="col-sm-6" style="width: 40%;">
+												<div class="mda-form-group label-floating" style="padding-bottom: 0.8rem;display: flex;align-items: center;flex-flow: row-reverse;">
+													<input style="flex: 1;margin-left: 1rem;margin-top:0;" id="last_name" name="last_name" type="text" maxlength="30" value="<?php echo $last_name;?>"
+														class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched"
+														required>
+													<label for="last_name" style="opacity: 1;position:relative;font-size: 1.5rem;margin: 0;"><?=$lh->translationFor('last_name')?></label>
+												</div>
+											</div>
+										</div> -->
 									<?php }//end if ?>
          <!-- /.ECCS Customization -->
 								</h4>
-						                <p class="ng-binding animated fadeInUpShort">
+						                <p class="ng-binding animated fadeInUpShort" style="margin-bottom: 0;display:none;">
 									 <!-- ECCS Customization -->
                                                                         <?php if(ECCS_BLIND_MODE === 'y'){ ?> 
-										<span id="span-cust-number" class="hidden"><label for="cust_number"> Client Number[#CN]: </label> <input type="text" id="cust_number" style="background-color:; border:; color:black; margin-top: 5px; padding-left: 5px; font-size: 14pt; font-weight: 600;" onclick="this.setSelectionRange(0, this.value.length)" readonly/>"Ctrl+C" to Copy Number.</span>
+										<span id="span-cust-number" class="hidden"><label for="cust_number"> Contact Number: </label> <input type="text" id="cust_number" style="background-color:; border:; color:black; margin-top: 5px; padding-left: 5px; font-size: 14pt; font-weight: 600;" onclick="this.setSelectionRange(0, this.value.length)"/></span>
 
 									<?php } else { ?>
                                                                         <!-- /.ECCS Customization -->
@@ -718,11 +812,13 @@ input:checked + .slider:before {
 												<span style="font-family:Arial; font-style:Bold;" class="fa fa-user hidden"></span>
 												<?=$lh->translationFor('contact_information')?></a>
 										 </li>
+										 <?php if (ECCS_BLIND_MODE === 'n') { ?>
 										 <li role="presentation">
 											<a href="#comments_tab" aria-controls="home" role="tab" data-toggle="tab" class="bb0">
 												<span class="fa fa-comments-o hidden"></span>
 											    <?=$lh->translationFor('comments')?></a>
 										 </li>
+										 <?php } ?>
 										 <li role="presentation">
 											<a href="#scripts" aria-controls="home" role="tab" data-toggle="tab" class="bb0">
 												<span class="fa fa-file-text-o hidden"></span>
@@ -752,10 +848,10 @@ input:checked + .slider:before {
 
 											<fieldset style="padding-bottom: 0px; margin-bottom: 0px;">
 												<h4 style="display: flex;">
-													<a href="#" data-role="button" class="pull-right edit-profile-button hidden" id="edit-profile" style="margin-left: auto;"><?=$lh->translationFor('edit_information')?></a>
+													<a href="#" data-role="button" class="pull-right edit-profile-button hidden" id="edit-profile" style="margin-left: auto; display: none !important;"><?=$lh->translationFor('edit_information')?></a>
 												</h4>
 												<!-- <br/> -->
-												<form role="form" id="name_form" class="formMain form-inline" >
+												<form role="form" id="name_form" class="formMain form-inline" style="margin-bottom: 0;">
 												
 												<!--LEAD ID-->
 												<input type="hidden" value="<?php echo $lead_id;?>" name="lead_id">
@@ -763,8 +859,10 @@ input:checked + .slider:before {
 												<input type="hidden" value="<?php echo $list_id;?>" name="list_id">
 												<!--ENTRY LIST ID-->
 												<input type="hidden" value="<?php echo $entry_list_id;?>" name="entry_list_id">
+												<?php if(ECCS_BLIND_MODE !== 'y'){ ?>
 												<!--VENDOR ID-->
 												<input type="hidden" value="<?php echo $vendor_lead_code;?>" name="vendor_lead_code">
+												<?php } ?>
 												<!--GMT OFFSET-->
 												<input type="hidden" value="<?php echo $gmt_offset_now;?>" name="gmt_offset_now">
 												<!--SECURITY PHRASE-->
@@ -779,29 +877,32 @@ input:checked + .slider:before {
 												<input type="hidden" value="" name="seconds">
 												<!--CUSTOM FORM LOADED-->
 												<input type="hidden" value="0" name="FORM_LOADED">
+												<?php if(ECCS_BLIND_MODE !== 'y'){ ?>
 												<!--ADDRESS3-->
 												<input type="hidden" value="<?php echo $address3;?>" name="address3">
-												
+												<?php } ?>
 												<div class="row">
-													<div class="col-sm-4">
-														<div class="mda-form-group label-floating">
+													<div class="col-sm-6">
+														<div class="mda-form-group label-floating" style="padding-bottom: 0.8rem;">
 															<input id="first_name" name="first_name" type="text" maxlength="30"  value="<?php echo $first_name;?>"
-																class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled required>
-															<label for="first_name"><?=$lh->translationFor('first_name')?></label>
+																class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" 
+																required readonly>
+															<label for="first_name"><?=$lh->translationFor('first_name')?> [#FN]</label>
 														</div>
 													</div>
-													<div class="col-sm-4">
-														<div class="mda-form-group label-floating">
+													<div class="col-sm-4 <?php if(ECCS_BLIND_MODE === 'y') { ?>hidden<?php } ?>">
+														<div class="mda-form-group label-floating" style="padding-bottom: 0.8rem;">
 															<input id="middle_initial" name="middle_initial" type="text" maxlength="1" value="<?php echo $middle_initial;?>"
 																class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled>
 															<label for="middle_initial"><?=$lh->translationFor('middle_initial')?></label>
 														</div>
 													</div>
-													<div class="col-sm-4">
-														<div class="mda-form-group label-floating">
+													<div class="col-sm-6">
+														<div class="mda-form-group label-floating" style="padding-bottom: 0.8rem;">
 															<input id="last_name" name="last_name" type="text" maxlength="30" value="<?php echo $last_name;?>"
-																class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled required>
-															<label for="last_name"><?=$lh->translationFor('last_name')?></label>
+																class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched"
+																required readonly>
+															<label for="last_name"><?=$lh->translationFor('last_name')?> [#LN]</label>
 														</div>
 													</div>
 												</div>
@@ -810,22 +911,43 @@ input:checked + .slider:before {
 												<form id="contact_details_form" class="formMain">
 													<!-- phone number & alternative phone number -->
 													<div class="row">
-														<div class="col-sm-6">
+														<div class="col-sm-4">
 															<div class="mda-form-group label-floating">
 																<span id="phone_numberDISP" class="hidden"></span>
 																<input id="phone_code" name="phone_code" type="hidden" value="<?php echo $phone_code;?>">
-																<input id="phone_number" name="phone_number" type="number" min="0" maxlength="18" width="auto" value="<?php echo $phone_number; ?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-phone-disabled" disabled required>
+																<input id="phone_number" name="phone_number" type="text" min="0" maxlength="18" width="auto" value="<?php echo $phone_number; ?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" 
+																	required readonly>
 																<input id="phone_number_DISP" type="number" min="0" maxlength="18" width="auto" value="" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched hidden" disabled>
-																<label for="phone_number"><?=$lh->translationFor('phone_number')?></label>
+																<label for="phone_number">
+																	<!-- <?=$lh->translationFor('phone_number')?> -->
+																	 Contact Number [#CN]
+																</label>
 																<!--
 																<span class="mda-input-group-addon">
 																	<em class="fa fa-phone fa-lg"></em>
 																</span>-->
 															</div>
 														</div>
-														<div class="col-sm-6">
+														<div class="col-sm-4">
 															<div class="mda-form-group label-floating">
-																<input id="alt_phone" name="alt_phone" type="number" min="0" maxlength="12" width="100" value="<?php echo $alt_phone;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled>
+																<input readonly id="email" name="email" type="text" width="auto" value="<?php echo $email;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly>
+																<label for="email">Email</label>
+																<!--
+																<span class="mda-input-group-addon">
+																	<em class="fa fa-phone fa-lg"></em>
+																</span>-->
+															</div>
+														</div>
+														<?php if(ECCS_BLIND_MODE === 'y') { ?>
+														<div class="col-sm-4">																				<div class="mda-form-group label-floating">
+																<input id="vendor_lead_code" name="vendor_lead_code" type="text" maxlength="100" value="<?php echo $vendor_lead_code;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly>
+																<label for="vendor_lead_code">Lead Source</label>
+															</div>
+														</div>
+														<?php } ?>
+														<div class="col-sm-4 <?php if(ECCS_BLIND_MODE === 'y') { ?>hidden<?php } ?>">
+															<div class="mda-form-group label-floating">
+																<input id="alt_phone" name="alt_phone" type="number" min="0" maxlength="12" width="100" value="<?php echo $alt_phone;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" readonly>
 																<label for="alt_phone"><?=$lh->translationFor('alternative_phone_number')?></label>
 															</div>
 														</div>
@@ -833,23 +955,43 @@ input:checked + .slider:before {
 													<!-- /.phonenumber & alt phonenumber -->
 													<!-- address1 & address2 -->
 													<div class="row">
-														<div class="col-xl-12 col-lg-6">
+														<div class="col-sm-4">
 															<div class="mda-form-group label-floating">
-																<input id="address1" name="address1" type="text" maxlength="100" width="auto" value="<?php echo $address1;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled>
-																<label for="address1"><?=$lh->translationFor('address')?></label>
+																<input id="address1" name="address1" type="text" maxlength="100" width="auto" value="<?php echo $address1;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly>
+																<label for="address1">
+																	<!-- <?=$lh->translationFor('address')?> -->
+																	Lead Date
+																</label>
 															</div>
 														<!--<span class="mda-input-group-addon">
 															<em class="fa fa-home fa-lg"></em>
 														</span>-->
 														</div>
-														<div class="col-xl-12 col-lg-6">																				<div class="mda-form-group label-floating">
-																<input id="address2" name="address2" type="text" maxlength="100" value="<?php echo $address2;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled>
-																<label for="address2"><?=$lh->translationFor('address2')?></label>
+														<div class="col-sm-4">																				<div class="mda-form-group label-floating">
+																<input id="address2" name="address2" type="text" maxlength="100" value="<?php echo $address2;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly>
+																<label for="address2">DNC Expiry</label>
+															</div>
+														</div>
+														<div class="col-sm-4">																				<div class="mda-form-group label-floating">
+																<input id="address3" name="address3" type="text" maxlength="100" value="<?php echo $address3;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" readonly>
+																<label for="address3">DNC Info</label>
+															</div>
+														</div>
+														<div class="col-sm-12">
+															<div class="mda-form-group label-floating">
+																<textarea rows="3" id="province" name="province" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea note-editor note-editor-margin" style="resize:none; width: 100%;font-size: 16pt;font-weight: 700;" readonly></textarea>
+																<label for="province">Other Info</label>
+															</div>
+														</div>
+														<div class="col-sm-12">
+															<div class="mda-form-group label-floating">
+																<textarea rows="10" id="comments" name="comments" maxlength="255" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea note-editor note-editor-margin" style="resize:none; width: 100%;"><?=$comments?></textarea>
+																<label for="comments">Remarks</label>
 															</div>
 														</div>
 													</div>
-													<!-- /.address1 & address2 -->
-													<div class="row">
+													<!-- /.address1 & address2 & address3 -->
+													<div class="row <?php if(ECCS_BLIND_MODE === 'y') { ?>hidden<?php } ?>">
 														<div class="col-sm-4">
 															<div class="mda-form-group label-floating">
 																<input id="city" name="city" type="text" maxlength="50" value="<?php echo $city;?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched input-disabled" disabled>
@@ -872,7 +1014,7 @@ input:checked + .slider:before {
 													<!-- /.city,state,postalcode -->
 												
 	 												<!-- country_code & email -->
-                                                                                                        <div class="row">
+                          <div class="row <?php if(ECCS_BLIND_MODE === 'y') { ?>hidden<?php } ?>">
                                                                                                                 <div class="col-xl-12 col-lg-6">
 															<div class="mda-form-group label-floating">
 																<select id="country_code" name="country_code" type="text" maxlength="3"	class="mda-form-control select2 ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched select input-disabled" title="<?=$lh->translationFor('select_country_code')?>" disabled>
@@ -894,7 +1036,7 @@ input:checked + .slider:before {
 													<!-- /.country_code & email -->
 												</form> 
 												<form role="form" id="gender_form" class="formMain form-inline" >
-													<div class="row">
+													<div class="row <?php if(ECCS_BLIND_MODE === 'y') { ?>hidden<?php } ?>">
 														<div class="col-sm-3">
 															<div class="mda-form-group label-floating">
 																<input id="title" name="title" type="text" maxlength="4" value="<?php echo $title;?>"
@@ -921,7 +1063,7 @@ input:checked + .slider:before {
 													</div>
 													<!-- /.gender & title -->
 
-													<div id="call_notes_content" class="col-sm-12">
+													<div id="call_notes_content" class="col-sm-12 hidden">
 														<div class="form-group" style="width:100%;">
 															<textarea rows="3" id="call_notes" name="call_notes" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea note-editor note-editor-margin" style="resize:none; width: 100%;"></textarea>
 															<label for="call_notes"><?=$lh->translationFor('call_notes')?></label>
@@ -966,8 +1108,7 @@ input:checked + .slider:before {
 											</div>
 											<br id="custom_br" style="display: none;">
 										</div><!--End of Profile-->
-										
-										<div id="comments_tab" role="tabpanel" class="tab-pane">
+										<div id="comments_tab" role="tabpanel" class="tab-pane" style="<?php if(ECCS_BLIND_MODE !== 'y'){ ?>display: hidden;<?php } ?>">
 											<div class="row">
 												<div class="col-sm-12">
 													<h4><!--Comments-->
@@ -979,15 +1120,14 @@ input:checked + .slider:before {
 															<p style="padding-right:0px;padding-top: 20px;"><?=$lh->translationFor('comments')?>:</p> 
 															<button id="ViewCommentButton" onClick="ViewComments('ON');" value="-History-" class="hidden"></button>
 														</div>
-														<div class="form-group" style="float: left; width:100%;">
+														<!-- <div class="form-group" style="float: left; width:100%;">
 															<textarea rows="10" id="comments" name="comments" maxlength="255" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea input-disabled note-editor note-editor-margin" style="resize:none; width: 100%;" disabled><?=$comments?></textarea>
 															<label for="comments"><?=$lh->translationFor('comments')?></label>
-														</div>
+														</div> -->
 													</form>
 												</div>
 											</div>
 										</div>
-										
 										<!-- Scripts -->
 										<div id="scripts" role="tabpanel" class="tab-pane">
 											<div class="row">
@@ -1782,7 +1922,8 @@ input:checked + .slider:before {
 			</li>
 			<li style="padding: 0 5px 15px;">
 				<div class="material-switch pull-right">
-					<input id="LeadPreview" name="LeadPreview" value="0" type="checkbox"/>
+					<!-- make default check -->
+					<input id="LeadPreview" name="LeadPreview" value="0" type="checkbox" />
 					<label for="LeadPreview" class="label-primary"></label>
 				</div>
 				<div  class="sidebar-toggle-labels" style="font-weight: bold; text-transform: uppercase;"><label for="LeadPreview"><?=$lh->translationFor('lead_preview')?></label></div>
@@ -2890,23 +3031,26 @@ dding-top: 10px;">
 				$('button#btnLogMeOut').append(" [#LP] ");
 				
 				$('#agent_tablist li:nth-of-type(1)>a.bb0').html(" Contact Info [#CI] ");
-	                        $('#agent_tablist li:nth-of-type(2)>a.bb0').append(" [#CM] ");
-                        	$('#agent_tablist li:nth-of-type(3)>a.bb0').append(" [#SC] ");
+	                        // $('#agent_tablist li:nth-of-type(2)>a.bb0').append(" [#CM] ");
+                        	// $('#agent_tablist li:nth-of-type(3)>a.bb0').append(" [#SC] ");
+                        	$('#agent_tablist li:nth-of-type(2)>a.bb0').append(" [#SC] ");
 
 				$('#edit-profile').append(" [#EI] ");
-				$('form#contact_details_form label[for="phone_number"]').append(" [#PN] ");
+				// $('form#contact_details_form label[for="phone_number"]').append(" [#CN] ");
 				$('form#contact_details_form label[for="alt_phone"]').html("Alt Phone Number [#APN] ");
-				$('form#contact_details_form label[for="address1"]').append(" [#A1] ");
-				$('form#contact_details_form label[for="address2"]').append(" [#A2] ");
+				// $('form#contact_details_form label[for="address1"]').append(" [#A1] ");
+				// $('form#contact_details_form label[for="address2"]').append(" [#A2] ");
                 	        $('form#contact_details_form label[for="city"]').append(" [#CT] ");
         	                $('form#contact_details_form label[for="state"]').append(" [#ST] ");
 	                        $('form#contact_details_form label[for="postal_code"]').append(" [#PC] ");
                 	        $('form#contact_details_form label[for="country_code"]').append(" [#CC] ");
-        	                $('form#contact_details_form label[for="email"]').append(" [#EM] ");
+        	                // $('form#contact_details_form label[for="email"]').append(" [#EM] ");
 	                        $('form#gender_form label[for="title"]').append(" [#TI] ");
                         	$('form#gender_form label[for="gender"]').append(" [#GE] ");
                 	        $('form#gender_form label[for="date_of_birth"]').append(" [#DB] ");
-        	                $('form#gender_form label[for="call_notes"]').append(" [#CN] ");
+                	        $('form#contact_details_form label[for="province"]').append(" [#OI] ");
+                	        $('form#contact_details_form label[for="comments"]').append(" [#RM] ");
+        	                // $('form#gender_form label[for="call_notes"]').append(" [#CN] ");
 
 				$("[data-toggle='control-sidebar']").append("<br><span>#CONF</span>");
 
