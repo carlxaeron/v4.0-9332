@@ -542,7 +542,11 @@ var refreshId = setInterval(function() {
             //    $("#GENDERhideFORieALT").html('<select size="1" name="gender_list" class="cust_form" id="gender_list"><option value="U">U - <?=$lh->translationFor('undefined')?></option><option value="M">M - <?=$lh->translationFor('male')?></option><option value="F">F - <?=$lh->translationFor('female')?></option></select>');
             //}
     
-            DispoSelectBox();
+            if(!window.UPDATELEADERROR) {
+                DispoSelectBox();
+            } else {
+                window.UPDATELEADERROR = false;
+            }
             //DispoSelectContent_create('','ReSET');
             WaitingForNextStep = 1;
             open_dispo_screen = 0;
@@ -1364,88 +1368,67 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
                 // User Exit
                 if(e.shiftKey && e.key == "End"){
                     hotkeysReady = false;
-                      if (is_logged_in && (live_customer_call > 0 || XD_live_customer_call > 0)) {
-                          swal({
-                              title: '<?=$lh->translationFor('error')?>',
-                              text: '<?=$lh->translationFor('currently_in_call')?>',
-                              type: 'error'
-                          });
-                      } else {
+                    if (is_logged_in && (live_customer_call > 0 || XD_live_customer_call > 0)) {
+                        swal({
+                            title: '<?=$lh->translationFor('error')?>',
+                            text: '<?=$lh->translationFor('currently_in_call')?>',
+                            type: 'error'
+                        });
+                    } else {
                         //  btnLogMeOut();
                         $("#cream-agent-logout").click();
-                      }
-      
+                    }
+    
                 // Phone Log In
                 } else if(e.shiftKey && e.key == "Home") {
                     hotkeysReady = false;
-                      if (is_logged_in && ((use_webrtc && phoneRegistered) || !use_webrtc)) {
-                          swal({
-                              title: '<?=$lh->translationFor('error')?>',
-                              text: '<?=$lh->translationFor('phone_already_logged_in')?>',
-                              type: 'error'
-                          });
-                      } else {
-                          btnLogMeIn();
-                      }
-      
+                    if (is_logged_in && ((use_webrtc && phoneRegistered) || !use_webrtc)) {
+                        swal({
+                            title: '<?=$lh->translationFor('error')?>',
+                            text: '<?=$lh->translationFor('phone_already_logged_in')?>',
+                            type: 'error'
+                        });
+                    } else {
+                        btnLogMeIn();
+                    }
+    
                     // Dial or Hangup
                     } else if(e.shiftKey && e.key == "!") {
-                      hotkeysReady = false;
-                      console.log('Shift: ' + e.shiftKey, 'Key: ' + e.key);
-                      btnDialHangup();
+                    hotkeysReady = false;
+                    console.log('Shift: ' + e.shiftKey, 'Key: ' + e.key);
+                    btnDialHangup();
                         
                     // Resume or Pause
                     } else if(e.shiftKey && e.key == "@") {
-                      if (live_customer_call < 1 && dialingINprogress < 1 && !ECCS_NO_LIVE) {
-                          btnResumePause();
+                    if (live_customer_call < 1 && dialingINprogress < 1 && !ECCS_NO_LIVE) {
+                        btnResumePause();
                     }
-      
+    
                 // Open Web form
                     } else if(e.shiftKey && e.key == "#") {
-                      $("#openWebForm").click();
-      
+                    $("#openWebForm").click();
+    
                 // Toggle Lead Preview
                     } else if(e.shiftKey && e.key == "$") {
-                      $("#LeadPreview").click();
-      
+                    $("#LeadPreview").click();
+    
                 // Callbacklist
                     } else if(e.shiftKey && e.key == "%") {
-                      if ($("#loaded-contents").is(':visible')) {
-                          MainPanelToFront();
-                      } else {
-                          $("a[href='#callbackslist']").click();
-                      }
+                    if ($("#loaded-contents").is(':visible')) {
+                        MainPanelToFront();
+                    } else {
+                        $("a[href='#callbackslist']").click();
+                    }
 
                 // Dial Lead
                     } else if(e.shiftKey && e.key == "^") {
                         $("a[title='DIAL LEAD']").click();
                     }
-                // Repoint Focus to Contact Info tab using shift + space
-                    else if(e.shiftKey && e.key == " ") {
-                        $('[href="#contact_info"]').focus();
-                    }
-                    // Repoint Focus to Contact Info tab using ctrl + space
-                    else if(e.ctrlKey && e.key == " ") {
-                        $('[href="#contact_info"]').focus();
-                    }
-                    // Repoint Focus to Contact Info tab using shift + F1 to F12 (any)
-                    else if(e.shiftKey) {
-                        if (e.key == "F1" || e.key == "F2" || e.key == "F3" || e.key == "F4" || e.key == "F5" || e.key == "F6" || e.key == "F7" || e.key == "F8" || e.key == "F9" || e.key == "F10" || e.key == "F11" || e.key == "F12") {
-                            $('[href="#contact_info"]').focus();
-                        }
-                    }
-                    // Repoint Focus to Contact Info tab using alt + F1 to F12 (any)
-                    else if(e.altKey) {
-                        if (e.key == "F1" || e.key == "F2" || e.key == "F3" || e.key == "F4" || e.key == "F5" || e.key == "F6" || e.key == "F7" || e.key == "F8" || e.key == "F9" || e.key == "F10" || e.key == "F11" || e.key == "F12") {
-                            $('[href="#contact_info"]').focus();
-                        }
-                    }
-                    // Repoint Focus to Contact Info tab using alt + shift + F1 to F12 (any)
-                    else if(e.shiftKey && e.altKey) {
-                        if (e.key == "F1" || e.key == "F2" || e.key == "F3" || e.key == "F4" || e.key == "F5" || e.key == "F6" || e.key == "F7" || e.key == "F8" || e.key == "F9" || e.key == "F10" || e.key == "F11" || e.key == "F12") {
-                            $('[href="#contact_info"]').focus();
-                        }
-                    }
+
+                // Repoint Focus to Contact Info tab using ctrl + space
+                if(e.ctrlKey && e.key == " ") {
+                    refocus();
+                }
                 
                 if (!hotkeysReady) {
                     setTimeout(function() {
@@ -1900,7 +1883,7 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
                         $("#scSubmit").removeClass('disabled');
                     }
 
-                    $('[href="#contact_info"]').focus();
+                    refocus();
                 })
                 .fail(function() {
                     $(".preloader").fadeOut('slow');
@@ -2020,17 +2003,19 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
             globalSession.mute();
         }
     });
-    
+    window.INPUTFOCUSED = false;
     $("input, textarea").on('focus', function() {
-        if ($("#enableHotKeys").is(':checked')) {
-            $(document).off('keydown', 'body', hotKeysAvailable);
-        }
+    //   if ($("#enableHotKeys").is(':checked')) {
+    //       $(document).off('keydown', 'body', hotKeysAvailable);
+    //   }
+       window.INPUTFOCUSED = true;
     });
     
     $("input, textarea").on('focusout', function() {
 	if ($("#enableHotKeys").is(':checked')) {
             $(document).on('keydown', 'body', hotKeysAvailable);
 	}
+    window.INPUTFOCUSED = false;
     });
 
     <?php if(ECCS_BLIND_MODE !== 'y'){?> 
@@ -2798,6 +2783,10 @@ function triggerHotkey(hotKeyId){
 // /.ECCS Customization
 
 function hotKeysAvailable(e) {
+    if (window.INPUTFOCUSED) {
+        return;
+    }
+
     if (hotkeys[e.key] === undefined) {
         return;
     }
@@ -3076,6 +3065,10 @@ function updateButtons () {
     }
 }
 
+function refocus() {
+    $('[href="#contact_info"]').focus();
+}
+
 function toggleStatus (status) {
     var statusClass = '';
     var statusLabel = '';
@@ -3087,6 +3080,7 @@ function toggleStatus (status) {
         case "LIVE":
             statusClass = 'livecall';
             statusLabel = '<?=$lh->translationFor('live_call')?>';
+            refocus();
             break;
         case "HANGUP":
             statusClass = 'callhangup';
@@ -5668,7 +5662,27 @@ function ManualDialCheckChannel(taskCheckOR) {
 		MD_dial_timed_out = 1;
         
         $("#MainStatusSpan").html('&nbsp;');
-        swal("<?=$lh->translationFor('dial_timeout')?>.");
+        alert("<?=$lh->translationFor('dial_timeout')?>.");
+        // swal("<?=$lh->translationFor('dial_timeout')?>.");
+// 
+        // let tempTmr;
+        // tempTmr = setInterval(function() {
+        //     if($(".sweet-alert.visible").length > 0) {
+        //         let tmr2;
+        //         let focusCnt = 0;
+        //         tmr2 = setInterval(function() {
+        //             $(".sweet-alert.visible button.confirm").focus();
+        //             focusCnt++;
+        //             if ($(".sweet-alert.visible button.confirm").is(':focus') && focusCnt > 3) {
+        //                 focusCnt = 0;
+        //                 clearInterval(tmr2); 
+        //                 colorLog("FocusConfirm", "Line #: <?=__LINE__?>");
+        //             }
+        //         }, 500);
+        //         colorLog("DialTimeout", "Line #: <?=__LINE__?>");
+        //         clearInterval(tempTmr);
+        //     }
+        // }, 500);
 
         if (taskCheckOR == 'YES') {
             toggleButton('DialWithCustomer', 'on');
@@ -6192,6 +6206,14 @@ function DialedCallHangup(dispowindow, hotkeysused, altdispo, nodeletevdac) {
 
 
 function DispoSelectBox() {
+    const SUBMITDISPOtimer = new Date().getTime();
+    const SUBMITDISPOtimer2 = window.SUBMITDISPO ? window.SUBMITDISPO : 0;
+    colorLog('SUBMITDISPO', SUBMITDISPOtimer + ' - ' + SUBMITDISPOtimer2, 'debug');
+    const isSUBMITDISPO = window.SUBMITDISPO && (SUBMITDISPOtimer - SUBMITDISPOtimer2) < 5000;
+    if (isSUBMITDISPO) {
+        colorLog('window.SUBMITDISPO reject', (new Date().getTime() - window.SUBMITDISPO), 'debug');
+        return;
+    }
     $("#select-disposition").modal({
         keyboard: false,
         backdrop: 'static'
@@ -6305,6 +6327,11 @@ function DispoSelectContent_create(taskDSgrp,taskDSstage) {
 
 
 function DispoSelectSubmit() {
+    if (window.UPDATELEADERRORSUBMIT) {
+        window.UPDATELEADERRORSUBMIT = false;
+        return;
+    }
+
     if (VDCL_group_id.length > 1) {var group = VDCL_group_id;}
     else {var group = campaign;}
 
@@ -6327,7 +6354,8 @@ function DispoSelectSubmit() {
     var DispoChoice = $("#DispoSelection").val().toString();
 
     if (DispoChoice.length < 1) {
-     	swal("<?=$lh->translationFor('must_select_disposition')?>.");
+     	// swal("<?=$lh->translationFor('must_select_disposition')?>.");
+        alert("<?=$lh->translationFor('must_select_disposition')?>.");
         //console.log("Dispo Choice: Must select disposition.");
     } else {
         if ($("#DialALTPhone").is(':checked') == true) {
@@ -6408,6 +6436,8 @@ function DispoSelectSubmit() {
                 }
             })
             .done(function (result) {
+                colorLog('window.SUBMITDISPO', window.SUBMITDISPO, 'debug');
+                window.SUBMITDISPO = new Date().getTime();
                 if(
                     DispoChoice === 'CBHOLD'
                     // && !$("#DispoSelectStop").is(':checked')
@@ -6422,7 +6452,8 @@ function DispoSelectSubmit() {
                         agent_log_id = result.data.agent_log_id;
                     } else {
                         dispo_error++;
-                        swal('<?=$lh->translationFor('dispo_leadid_not_valid')?>');
+                        // swal('<?=$lh->translationFor('dispo_leadid_not_valid')?>');
+                        alert('<?=$lh->translationFor('dispo_leadid_not_valid')?>');
                     }
                 }
                 
@@ -6436,7 +6467,7 @@ function DispoSelectSubmit() {
     
                 waiting_on_dispo = 0;
 
-                $('[href="#contact_info"]').focus();
+                refocus();
             });
             
             //CLEAR ALL FORM VARIABLES
@@ -6787,6 +6818,9 @@ function ManualDialSkip() {
             ClearScript();
 
             window.DODIALPLEASE = 1;
+
+            
+            huTimerPatch();
         });
     }
 }
@@ -6795,6 +6829,40 @@ function ManualDialSkip() {
 // ################################################################################
 // Update vicidial_list lead record with all altered values from form
 let hutimer;
+function huTimerPatch() {
+    // if (!window.DDNLoop) {
+        if (!hutimer) {
+            hutimer = setInterval(function() {
+                const isPass = $(".sweet-alert.visible").length === 0 && AgentDispoing < 1;
+                if(isPass && $('#btnDialHangup[title="Dial Next Call"]').is(':visible') && !$('#btnDialHangup[title="Dial Next Call"]').is('.disabled') && !$("#DispoSelectStop").is(':checked')) {
+                        clearInterval(hutimer);
+                        hutimer = null;
+                        $('#btnDialHangup[title="Dial Next Call"]').click();
+                        colorLog('Dial Next Call clicked', 'commentout', 'debug');
+                } else if(isPass && $("#DispoSelectStop").is(':checked')) {
+                    clearInterval(hutimer);
+                    hutimer = null;
+                    colorLog('Dial Next Call clicked 2', 'commentout', 'debug');
+                }
+                colorLog('hutimer', hutimer, 'debug');
+                if(window.UPDATELEADERROR && $("#select-disposition").is(':visible')) { 
+                    console.log('close natin');
+                    // $('#select-disposition').modal('hide');
+                    // clearInterval(hutimer);
+                    // hutimer = null;
+                    // window.UPDATELEADERROR = false;
+                    // $('#btnDialHangup[title="Dial Next Call"]').click();
+                    window.UPDATELEADERRORSUBMIT = true;
+                    $('#DispoSelectContent *[id^="dispo-"]')[0].click();
+                    $('#btn-dispo-submit').click();
+                }
+            }, 1000);
+        }
+    // } else {
+    //     if(hutimer) clearInterval(hutimer);
+    // }
+}
+
 function CustomerData_update() {
     var REGcommentsAMP = new RegExp('&',"g");
     var REGcommentsQUES = new RegExp("\\?","g");
@@ -6902,6 +6970,7 @@ function CustomerData_update() {
     })
     .done(function (result) {
         console.log('Customer data updated...');
+        if (result.result === 'error') window.UPDATELEADERROR = true;
         
         $('.input-disabled').prop('disabled', true);
         $('.input-phone-disabled').prop('disabled', true);
@@ -6918,24 +6987,7 @@ function CustomerData_update() {
 
         window.DODIALPLEASE = 1;
 
-        if (!window.DDNLoop) {
-            if (!hutimer) {
-                hutimer = setInterval(function() {
-                    if($('#btnDialHangup[title="Dial Next Call"]').is(':visible') && !$('#btnDialHangup[title="Dial Next Call"]').is('.disabled') && !$("#DispoSelectStop").is(':checked')) {
-                            clearInterval(hutimer);
-                            hutimer = null;
-                            $('#btnDialHangup[title="Dial Next Call"]').click();
-                            colorLog('Dial Next Call clicked', 'commentout', 'debug');
-                    } else if($("#DispoSelectStop").is(':checked')) {
-                        clearInterval(hutimer);
-                        hutimer = null;
-                        colorLog('Dial Next Call clicked 2', 'commentout', 'debug');
-                    }
-                }, 1000);
-            }
-        } else {
-            if(hutimer) clearInterval(hutimer);
-        }
+        huTimerPatch();
     });
 }
 
@@ -7323,6 +7375,7 @@ function BasicOriginateCall(tasknum, taskprefix, taskreverse, taskdialvalue, tas
 function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnStagE, mdVendorid, mdgroupalias, mdtype) {
     colorLog("START", "---------------", "info");
     if (window.DODIALPLEASETIME) {
+        colorLog("window.DODIALPLEASETIME123", dialingINprogress, "debug");
         colorLog("window.DODIALPLEASETIME1", new Date().getTime(), "debug");
         colorLog("window.DODIALPLEASETIME2", window.DODIALPLEASETIME, "debug");
         colorLog("window.DODIALPLEASETIME3", (new Date().getTime() - window.DODIALPLEASETIME), "debug");
@@ -7333,7 +7386,7 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
         colorLog("window.DODIALPLEASEID", window.DODIALPLEASEID, "debug");
         colorLog("ISPAUSED", $("#DispoSelectStop").is(':checked'), "debug");
     }
-    if ((!window.DODIALPLEASE || (window.DODIALPLEASE === 1 && !window.DDNLoop) || window.DODIALPLEASE === 2) && ((!window.DODIALPLEASETIME || (new Date().getTime() - window.DODIALPLEASETIME) > 1500) || (!window.DODIALPLEASEFUNC || (window.DODIALPLEASEFUNC.times === 1 && window.DODIALPLEASEFUNC.func === 'goManualDialSkip'))) && !window.DODIALPLEASELOADING) {
+    if ((!window.DODIALPLEASE || (window.DODIALPLEASE === 1 && !window.DDNLoop) || window.DODIALPLEASE === 2) && ((!window.DODIALPLEASETIME || (new Date().getTime() - window.DODIALPLEASETIME) > 1500) || (!window.DODIALPLEASEFUNC || (window.DODIALPLEASEFUNC.times === 1 && window.DODIALPLEASEFUNC.func === 'goManualDialSkip'))) && !window.DODIALPLEASELOADING && dialingINprogress !== 1) {
         window.DODIALPLEASELOADING = 1;
         // do nothing
         colorLog("END", "---------------", "info");

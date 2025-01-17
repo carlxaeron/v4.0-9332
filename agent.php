@@ -710,7 +710,8 @@ input:checked + .slider:before {
 								<small><b><?=$lh->translationFor('note')?>:</b> <?=$lh->translationFor('hotkeys_note')?></small>
 								<?php } else { ?>
 								<small id="" style="" class="">Login [Shift + Home]</small><br/>
-								<small id"" style="" class="">Logout[Shift + End]</small><br/><br/>
+								<small id"" style="" class="">Logout[Shift + End]</small><br/>
+								<small id="" style="" class="">Contact Info [Ctrl + Space]</small><br/><br/>
 								<small id"" style="" class="">Dial/Hangup [Shift + 1]</small><br/>
 								<small id"" style="" class="">Pause/Resume [Shift + 2]</small><br/>
 								<small id"" style="" class="">Open Webform [Shift + 3]</small><br/>
@@ -914,7 +915,7 @@ input:checked + .slider:before {
 															<div class="mda-form-group label-floating">
 																<span id="phone_numberDISP" class="hidden"></span>
 																<input id="phone_code" name="phone_code" type="hidden" value="<?php echo $phone_code;?>">
-																<input id="phone_number" name="phone_number" type="number" min="0" maxlength="18" width="auto" value="<?php echo $phone_number; ?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" 
+																<input id="phone_number" name="phone_number" type="text" min="0" maxlength="18" width="auto" value="<?php echo $phone_number; ?>" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched" 
 																	required readonly>
 																<input id="phone_number_DISP" type="number" min="0" maxlength="18" width="auto" value="" class="mda-form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched hidden" disabled>
 																<label for="phone_number">
@@ -984,7 +985,7 @@ input:checked + .slider:before {
 														</div>
 														<div class="col-sm-12">
 															<div class="mda-form-group label-floating">
-																<textarea rows="10" id="comments" name="comments" maxlength="255" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea note-editor note-editor-margin" style="resize:none; width: 100%;" readonly><?=$comments?></textarea>
+																<textarea rows="10" id="comments" name="comments" maxlength="255" class="form-control ng-pristine ng-empty ng-invalid ng-invalid-required ng-touched textarea note-editor note-editor-margin" style="resize:none; width: 100%;"><?=$comments?></textarea>
 																<label for="comments">Remarks</label>
 															</div>
 														</div>
