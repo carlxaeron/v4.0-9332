@@ -150,7 +150,8 @@ var consoleColors = {
 
 // Add this helper function for consistent console logging
 function colorLog(label, msg, type) {
-    console.log(`%c${label}:%c ${msg}`, 
+    let msg2 = typeof msg === 'object' ? JSON.stringify(msg) : msg;
+    console.log(`%c${label}:%c ${msg2}`, 
         consoleColors.label,
         consoleColors[type] || consoleColors.info
     );
@@ -446,6 +447,85 @@ window_focus = true;
 }).blur(function() {
 window_focus = false;
 }).trigger('focus');
+
+class Patcher {
+    constructor() {
+        console.log('working');
+        this.data = {}
+    }
+    dnBtn = () => {
+        return $('#btnDialHangup[title="Dial Next Call"]');
+    }
+
+    setData = (target, value) => {
+        this.data[target] = value;
+        colorLog('Data', this.data, 'info');
+    }
+
+    setStart = (bool) => {
+        this.setData('start', bool);
+    }
+    isStart = () => {
+        return this.data.start = this.data.start || false;
+    }
+
+    setClick = (bool) => {
+        this.setData('click', bool);
+    }
+    isClick = () => {
+        return this.data.click = this.data.click || false;
+    }
+
+    visible = (time) => {
+        if(typeof time !== 'undefined') {
+            this.setData('visible', time);
+        } 
+        
+        return this.data.visible;
+    }
+
+    dialNextCaller = (config = {}) => {
+        if(config.start) {
+            this.setStart(true);
+        } else if(!this.isStart()) return;
+        let goClick = false;
+        
+        const isDnVisible = this.dnBtn().is(':visible');
+        const isDnDisabled = this.dnBtn().is('.disabled');
+        const isDispoStop = $("#DispoSelectStop").is(':checked');
+        const isSweetAlert = $(".sweet-alert.visible").length;
+        const isAgentDispoing = AgentDispoing < 1;
+        const isPass = isDnVisible && !isDnDisabled && !isDispoStop && !isSweetAlert && isAgentDispoing && !this.isClick();
+
+        if(isPass) {
+            colorLog('Dial Next', this.visible(), 'success');
+            colorLog('Dial Next', new Date().getTime(), 'success');
+            if(!this.visible()) {
+                this.visible(new Date().getTime());
+            } else if (new Date().getTime() - this.visible() > 2000) {
+                goClick = true;
+            } else {
+                if (this.isClick() && (new Date().getTime() - this.isClick()) > 2000) {
+                    this.setClick(false);
+                }
+            }
+        } else if (!this.dnBtn().is(':visible') && this.visible()) {
+            this.setData('visible', false);
+        }
+        if (goClick && isPass) {
+            console.log('clickingggg');
+            colorLog('Dial Next', 'Clicking at ' + (new Date().getTime() - this.visible()), 'success');
+            this.clickDialNext();
+            this.setClick(new Date().getTime());
+            this.setData('visible', false);
+        }
+    }
+    
+    clickDialNext = () => {
+        this.dnBtn().click();
+    }
+}
+window.Patcher = new Patcher();
 
 $(window).load(function() {
 var refreshId = setInterval(function() {
@@ -814,6 +894,8 @@ var refreshId = setInterval(function() {
         if (STATEWIDE_SALES_REPORT === "y") {
             GetAgentSalesCount();
         }
+
+        window.Patcher.dialNextCaller();
     } else {
         updateButtons();
         
@@ -7478,6 +7560,7 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
         else
             {var call_prefix = manual_dial_prefix;}
         
+        window.Patcher.dialNextCaller({start: true});
         var postData = {
             goAction: 'goManualDialNext',
             goUser: uName,
@@ -7536,6 +7619,7 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
             }
         })
         .done(function (result) {
+            window.Patcher.setClick(false);
             // window.DODIALPLEASEFUNC = false;
             // window.DODIALPLEASERESP = !window.DODIALPLEASERESP ? (result.data && result.data.lead_id && [result.data.lead_id]) || [] : [...window.DODIALPLEASERESP, result.data.lead_id];
             // window.DODIALPLEASEID = result.data.lead_id;
