@@ -461,6 +461,7 @@ class Patcher {
                 goManualDialSkip: false,
                 goUpdateLead: false,
                 loop: false,
+                timeout: false,
             },
             focused: false,
         }
@@ -474,7 +475,7 @@ class Patcher {
         this.data[target] = value;
         const newData = this.data;
 
-        if (JSON.stringify(oldData) !== JSON.stringify(newData)) {
+        if (JSON.stringify(oldData) != JSON.stringify(newData)) {
             colorLog('Old Data', oldData, 'info');
             colorLog('Data', newData, 'info');
         }
@@ -505,7 +506,11 @@ class Patcher {
     setAutoDialSteps = (config, value) => {
         let steps = this.data.steps;
         steps[config] = value;
-        this.setData('steps', steps);
+        if(this.data.steps.goUpdateLead && this.data.steps.goUpdateDispo) {
+            this.setAutoDialStepsReset();
+        } else {
+            this.setData('steps', steps);
+        }
     }
 
     focus = (bool) => {
@@ -517,6 +522,7 @@ class Patcher {
 
     setAutoDialStepsReset = () => {
         this.setData('steps', {
+            ...this.data.steps,
             goManualDialNext: false,
             goUpdateDispo: false,
             goManualDialSkip: false,
@@ -537,9 +543,11 @@ class Patcher {
         const isDnVisible = this.dnBtn().is(':visible');
         const isDnDisabled = this.dnBtn().is('.disabled');
         const isDispoStop = $("#DispoSelectStop").is(':checked');
-        const isSweetAlert = $(".sweet-alert.visible").length;
+        const isSweetAlert = $(".sweet-alert.visible").length && $(".sweet-alert.visible").is(':visible');
         const isAgentDispoing = AgentDispoing < 1;
-        const isPass = isDnVisible && !isDnDisabled && !isDispoStop && !isSweetAlert && isAgentDispoing && !this.isClick();
+        const isTimeout = this.data.steps.timeout;
+        const isPass2 = isDnVisible && !isDnDisabled && !isDispoStop && !isSweetAlert && isAgentDispoing && !this.isClick();
+        const isPass = isPass2 && isDnVisible && !isDnDisabled && !isDispoStop && !isSweetAlert && isAgentDispoing && !this.isClick();
         const time = new Date().getTime();
 
         if(isPass) {
@@ -567,6 +575,19 @@ class Patcher {
             this.setClick(new Date().getTime());
             this.setData('visible', false);
             this.setAutoDialStepsReset();
+        } else if (isTimeout && isPass2) {
+            this.clickDialNext();
+            $('#select-disposition').css({opacity: '0.01'});
+            let interval = setInterval(() => {
+                if ($('.btn.dispo-focus').is(':visible')) {
+                    $('.btn.dispo-focus').first().click();
+                    $('#btn-dispo-submit').click();
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        $('#select-disposition').css({opacity: '1'});
+                    }, 1000);
+                }
+            }, 1000);
         }
     }
 
@@ -5819,6 +5840,8 @@ function ManualDialCheckChannel(taskCheckOR) {
         
         $("#MainStatusSpan").html('&nbsp;');
         alert("<?=$lh->translationFor('dial_timeout')?>.");
+        window.Patcher.setAutoDialSteps('timeout', true);
+
         // swal("<?=$lh->translationFor('dial_timeout')?>.");
 // 
         // let tempTmr;
@@ -6611,7 +6634,11 @@ function DispoSelectSubmit() {
                     } else {
                         dispo_error++;
                         // swal('<?=$lh->translationFor('dispo_leadid_not_valid')?>');
-                        alert('<?=$lh->translationFor('dispo_leadid_not_valid')?>');
+                        if(!window.Patcher.data.steps.timeout) {
+                            alert('<?=$lh->translationFor('dispo_leadid_not_valid')?>');
+                        } else {
+                            window.Patcher.setAutoDialSteps('timeout', false);
+                        }
                     }
                 }
                 
