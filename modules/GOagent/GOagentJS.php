@@ -462,6 +462,7 @@ class Patcher {
                 goUpdateLead: false,
                 loop: false,
                 timeout: false,
+                failed: false,
             },
             focused: false,
         }
@@ -547,7 +548,7 @@ class Patcher {
         const isAgentDispoing = AgentDispoing < 1;
         const isTimeout = this.data.steps.timeout;
         const isPass2 = isDnVisible && !isDnDisabled && !isDispoStop && !isSweetAlert && isAgentDispoing && !this.isClick();
-        const isPass = isPass2 && isDnVisible && !isDnDisabled && !isDispoStop && !isSweetAlert && isAgentDispoing && !this.isClick();
+        const isPass = isPass2 && isDnVisible && !isDnDisabled && !isDispoStop && !isSweetAlert && isAgentDispoing && !this.isClick() && !this.data.steps.failed;
         const time = new Date().getTime();
 
         if(isPass) {
@@ -1598,9 +1599,8 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
                 if(e.ctrlKey && e.key == " ") {
                     if ($("#loaded-contents").is(':visible')) {
                         MainPanelToFront();
-                    } else {
-                        $("a[href='#callbackslist']").click();
                     }
+
                     refocus();
                 }
                 
@@ -4808,10 +4808,19 @@ function DialLog(taskMDstage, nodeletevdac) {
         goQMExtension: qm_extension,
         responsetype: 'json'
     };
+    if (!postData.goLeadID) {
+        return;
+        // const newData = {
+        //     goAgentLogID: '',
+        //     goCampaign: '',
+        //     goConfExten: '',
+        //     goExten: '',
 
+        // };   
+    }
     $.ajax({
         type: 'POST',
-        url: '<?=$goAPI?>/goAgent/goAPI.php',
+        url: '<?=$goAPI?>/goAgent/goAPI.php?goManualDialLogCall',
         processData: true,
         data: postData,
         dataType: "json",
@@ -5588,6 +5597,7 @@ function ManualDialCheckChannel(taskCheckOR) {
         }
     })
     .done(function (result) {
+        if(result.result === 'error') return;
         var this_MD_data = result.data;
         var MDlookCID = result.lookCID;
         var regMDL = new RegExp("^Local","ig");
@@ -6603,7 +6613,18 @@ function DispoSelectSubmit() {
             // if (window.DODIALPLEASE !== 999) {
             //     window.DODIALPLEASE = 2;
             // }
-    
+            if(!postData.goLeadID) {
+                postData.goUser = '';
+                postData.goCampaign = '';
+                postData.goAgentLogID = '';
+                postData.goMDnextCID = '';
+                postData.goPhoneNumber = '';
+                postData.goSessionName = '';
+                postData.goStage = '';
+                postData.goPhoneCode = '';
+                postData.goPass = '';
+            }
+
             $.ajax({
                 type: 'POST',
                 url: '<?=$goAPI?>/goAgent/goAPI.php?goUpdateDispo=', // url: '<?=$goAPI?>/goAgent/goAPI.php?goUpdateDispo=' + window.DODIALPLEASE,
@@ -7143,8 +7164,8 @@ function CustomerData_update() {
     // if (window.DODIALPLEASE !== 999) {
     //     window.DODIALPLEASE = 2;
     // }
-
-    $.ajax({
+    const { timeout, goUpdateLead } = window.Patcher.data.steps;
+    if(!timeout && !goUpdateLead) $.ajax({
         type: 'POST',
         url: '<?=$goAPI?>/goAgent/goAPI.php?goUpdateLead',
         processData: true,
@@ -7665,7 +7686,7 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
         else
             {var call_prefix = manual_dial_prefix;}
         
-        window.Patcher.dialNextCaller({start: true});
+        window.Patcher.dialNextCaller({start: !window.Patcher.data.steps.failed ? true : false});
         var postData = {
             goAction: 'goManualDialNext',
             goUser: uName,
@@ -7725,7 +7746,16 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
             }
         })
         .done(function (result) {
-            window.Patcher.setAutoDialSteps('goManualDialNext', true);
+            if(result && result.result === 'error' && window.Patcher.isClick()) {
+                window.Patcher.setAutoDialSteps('failed', true);
+                window.Patcher.setStart(false);
+            } else {
+                if(window.Patcher.data.steps.failed) {
+                    window.Patcher.setAutoDialSteps('failed', false);
+                    window.Patcher.setStart(true);
+                }
+                window.Patcher.setAutoDialSteps('goManualDialNext', true);
+            }
             window.Patcher.setClick(false);
             // window.DODIALPLEASEFUNC = false;
             // window.DODIALPLEASERESP = !window.DODIALPLEASERESP ? (result.data && result.data.lead_id && [result.data.lead_id]) || [] : [...window.DODIALPLEASERESP, result.data.lead_id];
@@ -7758,7 +7788,8 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
                     auto_dial_level = starting_dial_level;
 
                     if (ERR_MSG.match(regMNCvar)) {
-                        swal("<?=$lh->translationFor('no_leads_on_hopper')?>.");
+                        if(!window.Patcher.data.steps.failed) alert("<?=$lh->translationFor('no_leads_on_hopper')?>."); // swal("<?=$lh->translationFor('no_leads_on_hopper')?>.");
+                        else window.Patcher.setAutoDialSteps('failed', false);
                         alert_displayed = 1;
                     }
                     if (ERR_MSG.match(regMDFvarDNC)) {
