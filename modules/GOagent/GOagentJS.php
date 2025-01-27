@@ -463,10 +463,19 @@ class Patcher {
                 loop: false,
                 timeout: false,
                 failed: false,
+                paused: false,
             },
             focused: false,
         }
+        this.appendPauseBtn();
     }
+    appendPauseBtn = () => {
+        $('#DispoSelectStop').parent().parent().css({'position':'relative'}).append('<button id="tempPauseBtn" style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;opacity:0;">Pause</button>');
+        $('#tempPauseBtn').click(() => {
+            $('#DispoSelectStop').click();
+        });
+    }
+
     dnBtn = () => {
         return $('#btnDialHangup[title="Dial Next Call"]');
     }
@@ -544,6 +553,7 @@ class Patcher {
         const isDnVisible = this.dnBtn().is(':visible');
         const isDnDisabled = this.dnBtn().is('.disabled');
         const isDispoStop = $("#DispoSelectStop").is(':checked');
+        this.data.steps.paused = isDispoStop;
         const isSweetAlert = $(".sweet-alert.visible").length && $(".sweet-alert.visible").is(':visible');
         const isAgentDispoing = AgentDispoing < 1;
         const isTimeout = this.data.steps.timeout;
@@ -593,19 +603,22 @@ class Patcher {
     }
 
     dialNextBugChecker = () => {
-        let dnPass = false;
+        // let dnPass = false;
 
-        if (this.data.steps.goManualDialNext && (this.data.steps.goUpdateDispo || this.data.steps.goUpdateLead)) {
-            dnPass = true;
-        }
+        // if (this.data.steps.goManualDialNext && (this.data.steps.goUpdateDispo || this.data.steps.goUpdateLead)) {
+        //     dnPass = true;
+        // }
 
-        if (!dnPass && this.data.steps.goManualDialNext && this.data.steps.goManualDialSkip) {
-            dnPass = true;
-        }
+        // if (!dnPass && this.data.steps.goManualDialNext && this.data.steps.goManualDialSkip) {
+        //     dnPass = true;
+        // }
 
-        if (!dnPass && this.data.start) return false;
+        // if (!dnPass && this.data.start) return false;
         
-        this.setAutoDialStepsReset();
+        // this.setAutoDialStepsReset();
+
+        if (this.data.steps.loop && this.data.steps.paused) return false;
+
         return true;
     }
     
@@ -768,6 +781,10 @@ var refreshId = setInterval(function() {
         if (manual_auto_hotkey == 1) {
             manual_auto_hotkey = 0;
             if (deBug) console.log("ManualDialNext", "Line #: <?=__LINE__?>");
+            // if(!window.Patcher.dialNextBugChecker()) {
+            //     refresh_interval = 730000;
+            //     return;
+            // }
             ManualDialNext('','','','','','0');
         }
         if (manual_auto_hotkey > 1 && !is_call_cb) {manual_auto_hotkey = (manual_auto_hotkey - 1);}
@@ -2814,6 +2831,17 @@ function btnDialHangup (is_true) {
                         if (has_inbound_call < 1 && live_customer_call < 1 && waiting_on_dispo < 1) { // if (has_inbound_call < 1 && live_customer_call < 1 && waiting_on_dispo < 1 || window.DDNLoop) {
                             has_outbound_call = 1;
                             if (deBug) console.log("ManualDialNext", "Line #: <?=__LINE__?>");
+                            // if(!window.Patcher.dialNextBugChecker()) {
+                            //     console.log(refresh_interval);
+                            //     refresh_interval = 730000;
+                            //     if (dialInterval) clearInterval(dialInterval);
+                            //     dialInterval = undefined;
+                            //     window.Patcher.setAutoDialSteps('loop', false);
+                            //     window.Patcher.setAutoDialSteps('failed', true);
+                            //     window.Patcher.setAutoDialSteps('timeout', true);
+                            //     document.dispatchEvent(new KeyboardEvent('keypress', {'key': '1'})); 
+                            //     return;
+                            // }
                             ManualDialNext('','','','','','0');
                         }
                             
@@ -7734,7 +7762,6 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
         // // else if (window.DODIALPLEASE === 0) {
         // //     window.DODIALPLEASE = 999;
         // // }
-        // if(window.Patcher.dialNextBugChecker()) 
         $.ajax({
             type: 'POST',
             url: '<?=$goAPI?>/goAgent/goAPI.php?goManualDialNext=', // url: '<?=$goAPI?>/goAgent/goAPI.php?goManualDialNext=' + prevDODIALPLEASE + '&DODIALPLEASETIME=' + window.DODIALPLEASETIME,
@@ -9915,7 +9942,7 @@ function CallBackDateSubmit() {
     $("#DispoSelection").val('CBHOLD');
     $("#callback-datepicker").modal('hide');
     
-    $("#DispoSelectStop").prop('checked', false);
+    // $("#DispoSelectStop").prop('checked', false);
     
     DispoSelectSubmit();
     CallBacksCountCheck();
