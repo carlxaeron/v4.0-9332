@@ -1592,9 +1592,12 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
     
                     // Dial or Hangup
                     } else if(e.shiftKey && e.key == "!") {
-                    hotkeysReady = false;
-                    console.log('Shift: ' + e.shiftKey, 'Key: ' + e.key);
-                    btnDialHangup();
+                        hotkeysReady = false;
+                        console.log('Shift: ' + e.shiftKey, 'Key: ' + e.key);
+                        btnDialHangup();
+                        if(!$("#DispoSelectStop").is(':checked')) {
+                            $("#DispoSelectStop").prop('checked', true);
+                        }
                         
                     // Resume or Pause
                     } else if(e.shiftKey && e.key == "@") {
@@ -6683,6 +6686,10 @@ function DispoSelectSubmit() {
                 //     colorLog('window.DODIALPLEASE 2', window.DODIALPLEASE, 'debug');
                 //     window.DDNLoop = true;
                     window.Patcher.setAutoDialSteps('loop', true);
+                    if(window.Patcher.data.steps.paused) {
+                        window.Patcher.data.steps.paused = false;
+                        $('#DispoSelectStop').prop('checked', false);
+                    }
                 }
                 // window.DODIALPLEASE = 2;
 
