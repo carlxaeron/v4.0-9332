@@ -150,7 +150,8 @@ var consoleColors = {
 
 // Add this helper function for consistent console logging
 function colorLog(label, msg, type) {
-    console.log(`%c${label}:%c ${msg}`, 
+    let msg2 = typeof msg === 'object' ? JSON.stringify(msg) : msg;
+    console.log(`%c${label}:%c ${msg2}`, 
         consoleColors.label,
         consoleColors[type] || consoleColors.info
     );
@@ -447,6 +448,197 @@ window_focus = true;
 window_focus = false;
 }).trigger('focus');
 
+class Patcher {
+    constructor() {
+        console.log('working');
+        this.data = {
+            start: false,
+            click: false,
+            visible: false,
+            steps: {
+                goManualDialNext: false,
+                goUpdateDispo: false,
+                goManualDialSkip: false,
+                goUpdateLead: false,
+                loop: false,
+                timeout: false,
+                failed: false,
+                paused: false,
+            },
+            focused: false,
+        }
+        this.appendPauseBtn();
+    }
+    appendPauseBtn = () => {
+        $(window).load(() => {
+            // $('#select-disposition').addClass('fade-in').removeClass('fade').show();
+let target1 = $('#DispoSelectStop').parents('.pull-left').first();
+            let target2 = target1.parent().find('.pull-right');
+            let target3 = target1.parents('.modal-footer').first();
+            target1.attr('class', 'mdl').css({'order': '-1', 'display': 'flex', 'justify-content': 'space-between', 'align-items': 'center'});
+            target2.addClass('mdr').removeClass('pull-right').css({'order': '4'});
+            target2.parent().prependTo(target3);
+            target1.css({'position':'relative'}).append('<button id="tempPauseBtn" style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;opacity:0;">Pause</button>');
+            target3.css({'display': 'flex', 'justify-content': 'space-between', 'align-items': 'center'});
+
+            $('#tempPauseBtn').click(() => {
+                $('#DispoSelectStop').click();
+            });
+        })
+    }
+
+    dnBtn = () => {
+        return $('#btnDialHangup[title="Dial Next Call"]');
+    }
+
+    setData = (target, value) => {
+        const oldData = this.data;
+        this.data[target] = value;
+        const newData = this.data;
+
+        if (JSON.stringify(oldData) != JSON.stringify(newData)) {
+            colorLog('Old Data', oldData, 'info');
+            colorLog('Data', newData, 'info');
+        }
+    }
+
+    setStart = (bool) => {
+        this.setData('start', bool);
+    }
+    isStart = () => {
+        return this.data.start;
+    }
+
+    setClick = (bool) => {
+        this.setData('click', bool);
+    }
+    isClick = () => {
+        return this.data.click;
+    }
+
+    visible = (time) => {
+        if(typeof time !== 'undefined') {
+            this.setData('visible', time);
+        } 
+        
+        return this.data.visible;
+    }
+
+    setAutoDialSteps = (config, value) => {
+        let steps = this.data.steps;
+        steps[config] = value;
+        if(this.data.steps.goUpdateLead && this.data.steps.goUpdateDispo) {
+            this.setAutoDialStepsReset();
+        } else {
+            this.setData('steps', steps);
+        }
+    }
+
+    focus = (bool) => {
+        if (typeof bool !== 'undefined') {
+            this.setData('focused', bool);
+        }
+        return this.data.focused;
+    }
+
+    setAutoDialStepsReset = () => {
+        this.setData('steps', {
+            ...this.data.steps,
+            goManualDialNext: false,
+            goUpdateDispo: false,
+            goManualDialSkip: false,
+            goUpdateLead: false,
+        });
+    }
+
+    isLoop = () => {
+        return this.data.steps.loop;
+    }
+
+    dialNextCaller = (config = {}) => {
+        if(config.start) {
+            this.setStart(true);
+        } else if(!this.isStart()) return;
+        let goClick = false;
+        
+        const isDnVisible = this.dnBtn().is(':visible');
+        const isDnDisabled = this.dnBtn().is('.disabled');
+        const isDispoStop = $("#DispoSelectStop").is(':checked');
+        this.data.steps.paused = isDispoStop;
+        const isSweetAlert = $(".sweet-alert.visible").length && $(".sweet-alert.visible").is(':visible');
+        const isAgentDispoing = AgentDispoing < 1;
+        const isTimeout = this.data.steps.timeout;
+        const isPass2 = isDnVisible && !isDnDisabled && !isDispoStop && !isSweetAlert && isAgentDispoing && !this.isClick();
+        const isPass = isPass2 && isDnVisible && !isDnDisabled && !isDispoStop && !isSweetAlert && isAgentDispoing && !this.isClick() && !this.data.steps.failed;
+        const time = new Date().getTime();
+
+        if(isPass) {
+            colorLog('Dial Next Visible', this.visible(), 'info');
+            colorLog('Dial Next Time', new Date().getTime(), 'info');
+            colorLog('Dial Next Calc', (time - this.visible()), 'info');
+            if(!this.visible()) {
+                this.visible(time);
+            } else if ((time - this.visible()) > 2000) {
+                goClick = true;
+            } else {
+                if (this.isClick() && (time - this.isClick()) > 5000) {
+                    this.setClick(false);
+                }
+            }
+        } else if (!this.dnBtn().is(':visible') && this.visible()) {
+            this.setData('visible', false);
+        }
+        colorLog('Dial Next Steps', this.data.steps, 'info');
+        if (goClick && isPass) {
+            console.log('clickingggg', this.data);
+            colorLog('Dial Next Steps2', this.data.steps, 'info');
+            colorLog('Dial Next', 'Clicking at ' + (time - this.visible()), 'success');
+            this.clickDialNext();
+            this.setClick(new Date().getTime());
+            this.setData('visible', false);
+            this.setAutoDialStepsReset();
+        } else if (isTimeout && isPass2) {
+            this.clickDialNext();
+            $('#select-disposition').css({opacity: '0.01'});
+            let interval = setInterval(() => {
+                if ($('.btn.dispo-focus').is(':visible')) {
+                    $('.btn.dispo-focus').first().click();
+                    $('#btn-dispo-submit').click();
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        $('#select-disposition').css({opacity: '1'});
+                    }, 1000);
+                }
+            }, 1000);
+        }
+    }
+
+    dialNextBugChecker = () => {
+        // let dnPass = false;
+
+        // if (this.data.steps.goManualDialNext && (this.data.steps.goUpdateDispo || this.data.steps.goUpdateLead)) {
+        //     dnPass = true;
+        // }
+
+        // if (!dnPass && this.data.steps.goManualDialNext && this.data.steps.goManualDialSkip) {
+        //     dnPass = true;
+        // }
+
+        // if (!dnPass && this.data.start) return false;
+        
+        // this.setAutoDialStepsReset();
+
+        if (this.data.steps.loop && this.data.steps.paused) return false;
+
+        return true;
+    }
+    
+    clickDialNext = () => {
+        this.dnBtn().click();
+    }
+}
+window.Patcher = new Patcher();
+
 $(window).load(function() {
 var refreshId = setInterval(function() {
     if (is_logged_in && ((use_webrtc && phoneRegistered) || !use_webrtc)) {
@@ -542,11 +734,11 @@ var refreshId = setInterval(function() {
             //    $("#GENDERhideFORieALT").html('<select size="1" name="gender_list" class="cust_form" id="gender_list"><option value="U">U - <?=$lh->translationFor('undefined')?></option><option value="M">M - <?=$lh->translationFor('male')?></option><option value="F">F - <?=$lh->translationFor('female')?></option></select>');
             //}
     
-            if(!window.UPDATELEADERROR) {
+            // if(!window.UPDATELEADERROR) {
                 DispoSelectBox();
-            } else {
-                window.UPDATELEADERROR = false;
-            }
+            // } else {
+            //    window.UPDATELEADERROR = false;
+            // }
             //DispoSelectContent_create('','ReSET');
             WaitingForNextStep = 1;
             open_dispo_screen = 0;
@@ -600,7 +792,11 @@ var refreshId = setInterval(function() {
         if (manual_auto_hotkey == 1) {
             manual_auto_hotkey = 0;
             if (deBug) console.log("ManualDialNext", "Line #: <?=__LINE__?>");
-            ManualDialNext('','','','','','0');
+            // if(!window.Patcher.dialNextBugChecker()) {
+            //     refresh_interval = 730000;
+            //     return;
+            // }
+            ManualDialNext('','','','','','0')("Line #: <?=__LINE__?>");
         }
         if (manual_auto_hotkey > 1 && !is_call_cb) {manual_auto_hotkey = (manual_auto_hotkey - 1);}
         
@@ -814,6 +1010,8 @@ var refreshId = setInterval(function() {
         if (STATEWIDE_SALES_REPORT === "y") {
             GetAgentSalesCount();
         }
+
+        window.Patcher.dialNextCaller();
     } else {
         updateButtons();
         
@@ -1394,9 +1592,12 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
     
                     // Dial or Hangup
                     } else if(e.shiftKey && e.key == "!") {
-                    hotkeysReady = false;
-                    console.log('Shift: ' + e.shiftKey, 'Key: ' + e.key);
-                    btnDialHangup();
+                        hotkeysReady = false;
+                        console.log('Shift: ' + e.shiftKey, 'Key: ' + e.key);
+                        btnDialHangup();
+                        if(!$("#DispoSelectStop").is(':checked')) {
+                            $("#DispoSelectStop").prop('checked', true);
+                        }
                         
                     // Resume or Pause
                     } else if(e.shiftKey && e.key == "@") {
@@ -1427,6 +1628,10 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
 
                 // Repoint Focus to Contact Info tab using ctrl + space
                 if(e.ctrlKey && e.key == " ") {
+                    if ($("#loaded-contents").is(':visible')) {
+                        MainPanelToFront();
+                    }
+
                     refocus();
                 }
                 
@@ -1843,7 +2048,7 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
 		        // ECCS Customization
 		        <?php if (ECCS_BLIND_MODE === "y"){ ?>
                 $('.clickhotkey').css('cursor', 'default');
-		        $('.clickhotkey.enabled').click(function() {
+		        $('.clickhotkey').click(function() {
                     if (!minimizedDispo) {
                         console.log($(this).attr('data-id'));
                         var clicked_hotkey = $(this).attr('data-id');
@@ -1903,7 +2108,7 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
     });
     
     $("input.digits-only, input.phonenumbers-only").keypress(function (e) {
-        console.log('keypress');
+        // console.log('keypress');
         var thisOne = $(this);
         //if the letter is not digit then display error and don't type anything
         if (thisOne.hasClass('digits-only') && e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
@@ -2003,19 +2208,21 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
             globalSession.mute();
         }
     });
-    window.INPUTFOCUSED = false;
+    // window.INPUTFOCUSED = false;
     $("input, textarea").on('focus', function() {
     //   if ($("#enableHotKeys").is(':checked')) {
     //       $(document).off('keydown', 'body', hotKeysAvailable);
     //   }
-       window.INPUTFOCUSED = true;
+    //   window.INPUTFOCUSED = true;
+        window.Patcher.focus(true);
     });
     
     $("input, textarea").on('focusout', function() {
-	if ($("#enableHotKeys").is(':checked')) {
-            $(document).on('keydown', 'body', hotKeysAvailable);
-	}
-    window.INPUTFOCUSED = false;
+        if ($("#enableHotKeys").is(':checked')) {
+                $(document).on('keydown', 'body', hotKeysAvailable);
+        }
+        // window.INPUTFOCUSED = false;
+        window.Patcher.focus(false);
     });
 
     <?php if(ECCS_BLIND_MODE !== 'y'){?> 
@@ -2613,7 +2820,7 @@ function btnDialHangup (is_true) {
                             if (has_inbound_call < 1 && live_customer_call < 1 && waiting_on_dispo < 1) {
                                 has_outbound_call = 1;
                                 if (deBug) console.log("ManualDialNext", "Line #: <?=__LINE__?>");
-                                ManualDialNext('','','','','','0');
+                                ManualDialNext('','','','','','0')("Line #: <?=__LINE__?>");
                             }
                         }
                         
@@ -2628,7 +2835,7 @@ function btnDialHangup (is_true) {
                     dialCount++;
                 }, 1000);
             } else {
-                // if (dialInterval) clearInterval(dialInterval);
+                if (dialInterval) clearInterval(dialInterval);
                 dialInterval = setInterval(function() {
                     colorLog('Dialing In Progress', 'red', 'debug');
                     console.log("check_inbound_call", check_inbound_call);
@@ -2638,7 +2845,17 @@ function btnDialHangup (is_true) {
                         if (has_inbound_call < 1 && live_customer_call < 1 && waiting_on_dispo < 1 || window.DDNLoop) {
                             has_outbound_call = 1;
                             if (deBug) console.log("ManualDialNext", "Line #: <?=__LINE__?>");
-                            ManualDialNext('','','','','','0');
+                            if(!window.Patcher.dialNextBugChecker()) {
+                                clearInterval(dialInterval);
+                                dialInterval = undefined;
+                                has_outbound_call = 0;
+                                toggleButton('DialHangup', 'dial');
+                                window.Patcher.setAutoDialSteps('loop', false);
+                                return;
+                            }
+                            clearInterval(dialInterval);
+                            dialInterval = undefined;
+                            ManualDialNext('','','','','','0')("Line #: <?=__LINE__?>");
                         }
                             
                         if (dialInterval) console.log('Clearing Interval', dialInterval);
@@ -2671,7 +2888,7 @@ function btnDialHangup (is_true) {
             }
             
             if (deBug) console.log("ManualDialNext", "Line #: <?=__LINE__?>");
-            ManualDialNext('','','','','','0','',MDtype);
+            ManualDialNext('','','','','','0','',MDtype)("Line #: <?=__LINE__?>");
         }
     }
 }
@@ -2783,8 +3000,9 @@ function triggerHotkey(hotKeyId){
 // /.ECCS Customization
 
 function hotKeysAvailable(e) {
-    if (window.INPUTFOCUSED) {
-        return;
+    // if (window.INPUTFOCUSED) {
+    if (window.Patcher.focus()) {
+       return;
     }
 
     if (hotkeys[e.key] === undefined) {
@@ -2860,10 +3078,17 @@ function hotKeysAvailable(e) {
         }
     }, 2000);
 }
-
+var toggleButtonHistory = [];
 function toggleButton (taskname, taskaction, taskenable, taskhide, toupperfirst, tolowerelse) {
     if (tolowerelse) {taskname = taskname.toLowerCase();}
     if (toupperfirst) {taskname = taskname.toUpperFirst();}
+    console.log('toggleButton', taskname, taskaction, taskenable, taskhide, toupperfirst, tolowerelse, toggleButtonHistory);
+    toggleButtonHistory.push({
+        taskname: taskname,
+        taskaction: taskaction,
+        taskenable: taskenable,
+        taskhide: taskhide
+    });
     
     var actClass = '';
     var actColor = '';
@@ -4631,10 +4856,19 @@ function DialLog(taskMDstage, nodeletevdac) {
         goQMExtension: qm_extension,
         responsetype: 'json'
     };
+    if (!postData.goLeadID) {
+        return;
+        // const newData = {
+        //     goAgentLogID: '',
+        //     goCampaign: '',
+        //     goConfExten: '',
+        //     goExten: '',
 
+        // };   
+    }
     $.ajax({
         type: 'POST',
-        url: '<?=$goAPI?>/goAgent/goAPI.php',
+        url: '<?=$goAPI?>/goAgent/goAPI.php?goManualDialLogCall',
         processData: true,
         data: postData,
         dataType: "json",
@@ -5055,7 +5289,7 @@ function CallBacksCountCheck() {
 // ################################################################################
 // Open up a callback customer record as manual dial preview mode
 function NewCallbackCall(taskCBid, taskLEADid, taskCBalt) {
-    window.DODIALPLEASE = 1;
+    // window.DODIALPLEASE = 1;
 
     var move_on = 1;
     if (typeof taskCBalt == 'undefined' || taskCBalt == '') {
@@ -5129,7 +5363,7 @@ function NewCallbackCall(taskCBid, taskLEADid, taskCBalt) {
             //$("#LeadPreview").prop('checked', false);
             //$("#DialALTPhone").prop('checked', true);
             if (deBug) console.log("ManualDialNext", "Line #: <?=__LINE__?>");
-            ManualDialNext(taskCBid,taskLEADid,'','','','0','',taskCBalt);
+            ManualDialNext(taskCBid,taskLEADid,'','','','0','',taskCBalt)("Line #: <?=__LINE__?>");
         }
     }
 }
@@ -5411,6 +5645,7 @@ function ManualDialCheckChannel(taskCheckOR) {
         }
     })
     .done(function (result) {
+        if(result.result === 'error') return;
         var this_MD_data = result.data;
         var MDlookCID = result.lookCID;
         var regMDL = new RegExp("^Local","ig");
@@ -5663,6 +5898,8 @@ function ManualDialCheckChannel(taskCheckOR) {
         
         $("#MainStatusSpan").html('&nbsp;');
         alert("<?=$lh->translationFor('dial_timeout')?>.");
+        window.Patcher.setAutoDialSteps('timeout', true);
+
         // swal("<?=$lh->translationFor('dial_timeout')?>.");
 // 
         // let tempTmr;
@@ -5754,7 +5991,7 @@ function NewManualDialCall(tempDiaLnow) {
                 {var sending_group_alias = 1;}
 
             if (deBug) console.log("ManualDialNext", "Line #: <?=__LINE__?>");
-            ManualDialNext("",MDLeadIDform,MDDiaLCodEform,MDPhonENumbeRform,MDLookuPLeaD,MDVendorLeadCode,sending_group_alias,MDTypeform);
+            ManualDialNext("",MDLeadIDform,MDDiaLCodEform,MDPhonENumbeRform,MDLookuPLeaD,MDVendorLeadCode,sending_group_alias,MDTypeform)("Line #: <?=__LINE__?>");
         }
 
         $("#MDPhonENumbeR").val('');
@@ -5801,7 +6038,7 @@ function NewManualDialCallFast() {
             $("#LeadPreview").prop('checked', false);
             //$("#DialALTPhone").prop('checked', true);
             if (deBug) console.log("ManualDialNext", "Line #: <?=__LINE__?>");
-            ManualDialNext("","",MDDiaLCodEform,MDPhonENumbeRform,MDLookuPLeaD,MDVendorLeadCode,'0');
+            ManualDialNext("","",MDDiaLCodEform,MDPhonENumbeRform,MDLookuPLeaD,MDVendorLeadCode,'0')("Line #: <?=__LINE__?>");
         }
     }
 }
@@ -6206,14 +6443,14 @@ function DialedCallHangup(dispowindow, hotkeysused, altdispo, nodeletevdac) {
 
 
 function DispoSelectBox() {
-    const SUBMITDISPOtimer = new Date().getTime();
-    const SUBMITDISPOtimer2 = window.SUBMITDISPO ? window.SUBMITDISPO : 0;
-    colorLog('SUBMITDISPO', SUBMITDISPOtimer + ' - ' + SUBMITDISPOtimer2, 'debug');
-    const isSUBMITDISPO = window.SUBMITDISPO && (SUBMITDISPOtimer - SUBMITDISPOtimer2) < 5000;
-    if (isSUBMITDISPO) {
-        colorLog('window.SUBMITDISPO reject', (new Date().getTime() - window.SUBMITDISPO), 'debug');
-        return;
-    }
+    // const SUBMITDISPOtimer = new Date().getTime();
+    // const SUBMITDISPOtimer2 = window.SUBMITDISPO ? window.SUBMITDISPO : 0;
+    // colorLog('SUBMITDISPO', SUBMITDISPOtimer + ' - ' + SUBMITDISPOtimer2, 'debug');
+    // const isSUBMITDISPO = window.SUBMITDISPO && (SUBMITDISPOtimer - SUBMITDISPOtimer2) < 5000;
+    // if (isSUBMITDISPO) {
+    //     colorLog('window.SUBMITDISPO reject', (new Date().getTime() - window.SUBMITDISPO), 'debug');
+    //     return;
+    // }
     $("#select-disposition").modal({
         keyboard: false,
         backdrop: 'static'
@@ -6327,10 +6564,10 @@ function DispoSelectContent_create(taskDSgrp,taskDSstage) {
 
 
 function DispoSelectSubmit() {
-    if (window.UPDATELEADERRORSUBMIT) {
-        window.UPDATELEADERRORSUBMIT = false;
-        return;
-    }
+    // if (window.UPDATELEADERRORSUBMIT) {
+    //     window.UPDATELEADERRORSUBMIT = false;
+    //     return;
+    // }
 
     if (VDCL_group_id.length > 1) {var group = VDCL_group_id;}
     else {var group = campaign;}
@@ -6373,7 +6610,7 @@ function DispoSelectSubmit() {
             $("#date-selected").html(moment(currDate).format('dddd, MMMM Do YYYY, h:mm a'));
             $("#callback-date").val(selectedDate);
             
-            $("#DispoSelectStop").prop('checked', true);
+            // $("#DispoSelectStop").prop('checked', true);
             pause_calling = 1;
             
             if (agentonly_callbacks > 0) {
@@ -6421,13 +6658,24 @@ function DispoSelectSubmit() {
                 responsetype: 'json'
             };
 
-            if (window.DODIALPLEASE !== 999) {
-                window.DODIALPLEASE = 2;
+            // if (window.DODIALPLEASE !== 999) {
+            //     window.DODIALPLEASE = 2;
+            // }
+            if(!postData.goLeadID) {
+                postData.goUser = '';
+                postData.goCampaign = '';
+                postData.goAgentLogID = '';
+                postData.goMDnextCID = '';
+                postData.goPhoneNumber = '';
+                postData.goSessionName = '';
+                postData.goStage = '';
+                postData.goPhoneCode = '';
+                postData.goPass = '';
             }
-    
+
             $.ajax({
                 type: 'POST',
-                url: '<?=$goAPI?>/goAgent/goAPI.php?goUpdateDispo=' + window.DODIALPLEASE,
+                url: '<?=$goAPI?>/goAgent/goAPI.php?goUpdateDispo=', // url: '<?=$goAPI?>/goAgent/goAPI.php?goUpdateDispo=' + window.DODIALPLEASE,
                 processData: true,
                 data: postData,
                 dataType: "json",
@@ -6436,16 +6684,22 @@ function DispoSelectSubmit() {
                 }
             })
             .done(function (result) {
-                colorLog('window.SUBMITDISPO', window.SUBMITDISPO, 'debug');
-                window.SUBMITDISPO = new Date().getTime();
+                window.Patcher.setAutoDialSteps('goUpdateDispo', true);
+                // colorLog('window.SUBMITDISPO', window.SUBMITDISPO, 'debug');
+                // window.SUBMITDISPO = new Date().getTime();
                 if(
                     DispoChoice === 'CBHOLD'
-                    // && !$("#DispoSelectStop").is(':checked')
+                //     // && !$("#DispoSelectStop").is(':checked')
                 ) {
-                    colorLog('window.DODIALPLEASE 2', window.DODIALPLEASE, 'debug');
-                    window.DDNLoop = true;
+                //     colorLog('window.DODIALPLEASE 2', window.DODIALPLEASE, 'debug');
+                //     window.DDNLoop = true;
+                    window.Patcher.setAutoDialSteps('loop', true);
+                    if(window.Patcher.data.steps.paused) {
+                        window.Patcher.data.steps.paused = false;
+                        $('#DispoSelectStop').prop('checked', false);
+                    }
                 }
-                window.DODIALPLEASE = 2;
+                // window.DODIALPLEASE = 2;
 
                 if (auto_dial_level < 1) {
                     if (result.result == 'success') {
@@ -6453,7 +6707,11 @@ function DispoSelectSubmit() {
                     } else {
                         dispo_error++;
                         // swal('<?=$lh->translationFor('dispo_leadid_not_valid')?>');
-                        alert('<?=$lh->translationFor('dispo_leadid_not_valid')?>');
+                        if(!window.Patcher.data.steps.timeout) {
+                            alert('<?=$lh->translationFor('dispo_leadid_not_valid')?>');
+                        } else {
+                            window.Patcher.setAutoDialSteps('timeout', false);
+                        }
                     }
                 }
                 
@@ -6634,7 +6892,7 @@ function DispoSelectSubmit() {
                         }
                         pause_calling = 1;
                         if (dispo_check_all_pause != '1') {
-                            colorLog('DispoSelectStop', 'commentout', 'debug');
+                            // colorLog('DispoSelectStop', 'commentout', 'debug');
                             // DispoSelectStop = false;
                             // $("#DispoSelectStop").prop('checked', false);
                         }
@@ -6649,7 +6907,7 @@ function DispoSelectSubmit() {
                                 if (deBug) console.log("ManualDialNext", "Line #: <?=__LINE__?>");
                                 var mdTimer = setInterval(function() {
                                     if (waiting_on_dispo < 1) {
-                                        ManualDialNext('','','','','','0');
+                                        ManualDialNext('','','','','','0')("Line #: <?=__LINE__?>");
                                         clearInterval(mdTimer);
                                     }
                                 }, 1000);
@@ -6705,17 +6963,17 @@ function ManualDialSkip() {
             responsetype: 'json'
         };
 
-        if (window.DODIALPLEASE !== 999) {
-            window.DODIALPLEASE = 2;
-        }
-        window.DODIALPLEASEFUNC = {
-            times: 1,
-            func: 'goManualDialSkip',
-        };
+        // if (window.DODIALPLEASE !== 999) {
+        //     window.DODIALPLEASE = 2;
+        // }
+        // window.DODIALPLEASEFUNC = {
+        //     times: 1,
+        //     func: 'goManualDialSkip',
+        // };
 
         $.ajax({
             type: 'POST',
-            url: '<?=$goAPI?>/goAgent/goAPI.php?goManualDialSkip=' + window.DODIALPLEASE,
+            url: '<?=$goAPI?>/goAgent/goAPI.php?goManualDialSkip=', // url: '<?=$goAPI?>/goAgent/goAPI.php?goManualDialSkip=' + window.DODIALPLEASE,
             processData: true,
             data: postData,
             dataType: "json",
@@ -6725,6 +6983,7 @@ function ManualDialSkip() {
         })
         .done(function (result) {
             if (result.result == 'success') {
+                window.Patcher.setAutoDialSteps('goManualDialSkip', true);
                 if (result.message == "LEAD NOT REVERTED") {
                     swal({
                         title: "<?=$lh->translationFor('error')?>",
@@ -6804,7 +7063,7 @@ function ManualDialSkip() {
                     }
                     
                     if (deBug) console.log("ManualDialNext", "Line #: <?=__LINE__?>");
-                    ManualDialNext('','','','','','0');
+                    ManualDialNext('','','','','','0')("Line #: <?=__LINE__?>");
                 }
             }
             
@@ -6817,10 +7076,10 @@ function ManualDialSkip() {
             //RefresHScript('CLEAR');
             ClearScript();
 
-            window.DODIALPLEASE = 1;
+            // window.DODIALPLEASE = 1;
 
             
-            huTimerPatch();
+            // huTimerPatch();
         });
     }
 }
@@ -6828,40 +7087,40 @@ function ManualDialSkip() {
 
 // ################################################################################
 // Update vicidial_list lead record with all altered values from form
-let hutimer;
-function huTimerPatch() {
-    // if (!window.DDNLoop) {
-        if (!hutimer) {
-            hutimer = setInterval(function() {
-                const isPass = $(".sweet-alert.visible").length === 0 && AgentDispoing < 1;
-                if(isPass && $('#btnDialHangup[title="Dial Next Call"]').is(':visible') && !$('#btnDialHangup[title="Dial Next Call"]').is('.disabled') && !$("#DispoSelectStop").is(':checked')) {
-                        clearInterval(hutimer);
-                        hutimer = null;
-                        $('#btnDialHangup[title="Dial Next Call"]').click();
-                        colorLog('Dial Next Call clicked', 'commentout', 'debug');
-                } else if(isPass && $("#DispoSelectStop").is(':checked')) {
-                    clearInterval(hutimer);
-                    hutimer = null;
-                    colorLog('Dial Next Call clicked 2', 'commentout', 'debug');
-                }
-                colorLog('hutimer', hutimer, 'debug');
-                if(window.UPDATELEADERROR && $("#select-disposition").is(':visible')) { 
-                    console.log('close natin');
-                    // $('#select-disposition').modal('hide');
-                    // clearInterval(hutimer);
-                    // hutimer = null;
-                    // window.UPDATELEADERROR = false;
-                    // $('#btnDialHangup[title="Dial Next Call"]').click();
-                    window.UPDATELEADERRORSUBMIT = true;
-                    $('#DispoSelectContent *[id^="dispo-"]')[0].click();
-                    $('#btn-dispo-submit').click();
-                }
-            }, 1000);
-        }
-    // } else {
-    //     if(hutimer) clearInterval(hutimer);
-    // }
-}
+// let hutimer;
+// function huTimerPatch() {
+//     // if (!window.DDNLoop) {
+//         if (!hutimer) {
+//             hutimer = setInterval(function() {
+//                 const isPass = $(".sweet-alert.visible").length === 0 && AgentDispoing < 1;
+//                 if(isPass && $('#btnDialHangup[title="Dial Next Call"]').is(':visible') && !$('#btnDialHangup[title="Dial Next Call"]').is('.disabled') && !$("#DispoSelectStop").is(':checked')) {
+//                         clearInterval(hutimer);
+//                         hutimer = null;
+//                         $('#btnDialHangup[title="Dial Next Call"]').click();
+//                         colorLog('Dial Next Call clicked', 'commentout', 'debug');
+//                 } else if(isPass && $("#DispoSelectStop").is(':checked')) {
+//                     clearInterval(hutimer);
+//                     hutimer = null;
+//                     colorLog('Dial Next Call clicked 2', 'commentout', 'debug');
+//                 }
+//                 colorLog('hutimer', hutimer, 'debug');
+//                 if(window.UPDATELEADERROR && $("#select-disposition").is(':visible')) { 
+//                     console.log('close natin');
+//                     // $('#select-disposition').modal('hide');
+//                     // clearInterval(hutimer);
+//                     // hutimer = null;
+//                     // window.UPDATELEADERROR = false;
+//                     // $('#btnDialHangup[title="Dial Next Call"]').click();
+//                     window.UPDATELEADERRORSUBMIT = true;
+//                     $('#DispoSelectContent *[id^="dispo-"]')[0].click();
+//                     $('#btn-dispo-submit').click();
+//                 }
+//             }, 1000);
+//         }
+//     // } else {
+//     //     if(hutimer) clearInterval(hutimer);
+//     // }
+// }
 
 function CustomerData_update() {
     var REGcommentsAMP = new RegExp('&',"g");
@@ -6954,11 +7213,11 @@ function CustomerData_update() {
         postData['goCustomFields'] = custom_fields.slice(0,-1);
     }
 
-    if (window.DODIALPLEASE !== 999) {
-        window.DODIALPLEASE = 2;
-    }
-
-    $.ajax({
+    // if (window.DODIALPLEASE !== 999) {
+    //     window.DODIALPLEASE = 2;
+    // }
+    const { timeout, goUpdateLead } = window.Patcher.data.steps;
+    if(!timeout && !goUpdateLead) $.ajax({
         type: 'POST',
         url: '<?=$goAPI?>/goAgent/goAPI.php?goUpdateLead',
         processData: true,
@@ -6969,8 +7228,9 @@ function CustomerData_update() {
         }
     })
     .done(function (result) {
+        window.Patcher.setAutoDialSteps('goUpdateLead', true);
         console.log('Customer data updated...');
-        if (result.result === 'error') window.UPDATELEADERROR = true;
+        // if (result.result === 'error') window.UPDATELEADERROR = true;
         
         $('.input-disabled').prop('disabled', true);
         $('.input-phone-disabled').prop('disabled', true);
@@ -6985,9 +7245,9 @@ function CustomerData_update() {
             GetCustomFields(custom_fields_list_id, true, true);
         }
 
-        window.DODIALPLEASE = 1;
+        // window.DODIALPLEASE = 1;
 
-        huTimerPatch();
+        // huTimerPatch();
     });
 }
 
@@ -7373,35 +7633,35 @@ function BasicOriginateCall(tasknum, taskprefix, taskreverse, taskdialvalue, tas
 
 
 function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnStagE, mdVendorid, mdgroupalias, mdtype) {
-    colorLog("START", "---------------", "info");
-    if (window.DODIALPLEASETIME) {
-        colorLog("window.DODIALPLEASETIME123", dialingINprogress, "debug");
-        colorLog("window.DODIALPLEASETIME1", new Date().getTime(), "debug");
-        colorLog("window.DODIALPLEASETIME2", window.DODIALPLEASETIME, "debug");
-        colorLog("window.DODIALPLEASETIME3", (new Date().getTime() - window.DODIALPLEASETIME), "debug");
-        colorLog("window.DODIALPLEASEFUNC", JSON.stringify(window.DODIALPLEASEFUNC), "debug");
-        colorLog("window.DDNLoop", window.DDNLoop, "debug");
-        colorLog("window.DODIALPLEASE", $(".formMain input[name='first_name']").val(), "debug");
-        colorLog("window.DODIALPLEASERESP", JSON.stringify(window.DODIALPLEASERESP), "debug");
-        colorLog("window.DODIALPLEASEID", window.DODIALPLEASEID, "debug");
-        colorLog("ISPAUSED", $("#DispoSelectStop").is(':checked'), "debug");
-    }
-    if ((!window.DODIALPLEASE || (window.DODIALPLEASE === 1 && !window.DDNLoop) || window.DODIALPLEASE === 2) && ((!window.DODIALPLEASETIME || (new Date().getTime() - window.DODIALPLEASETIME) > 1500) || (!window.DODIALPLEASEFUNC || (window.DODIALPLEASEFUNC.times === 1 && window.DODIALPLEASEFUNC.func === 'goManualDialSkip'))) && !window.DODIALPLEASELOADING && dialingINprogress !== 1) {
-        window.DODIALPLEASELOADING = 1;
-        // do nothing
-        colorLog("END", "---------------", "info");
-    } else {
-        if (window.DODIALPLEASELOADING) {
-            colorLog("window.DODIALPLEASELOADING", window.DODIALPLEASELOADING, "error");
-        }
-        colorLog("window.DODIALPLEASE", window.DODIALPLEASE, "error");
-        colorLog("END", "---------------", "info");
-        return;
-    }
+    // colorLog("START", "---------------", "info");
+    // if (window.DODIALPLEASETIME) {
+    //     colorLog("window.DODIALPLEASETIME123", dialingINprogress, "debug");
+    //     colorLog("window.DODIALPLEASETIME1", new Date().getTime(), "debug");
+    //     colorLog("window.DODIALPLEASETIME2", window.DODIALPLEASETIME, "debug");
+    //     colorLog("window.DODIALPLEASETIME3", (new Date().getTime() - window.DODIALPLEASETIME), "debug");
+    //     colorLog("window.DODIALPLEASEFUNC", JSON.stringify(window.DODIALPLEASEFUNC), "debug");
+    //     colorLog("window.DDNLoop", window.DDNLoop, "debug");
+    //     colorLog("window.DODIALPLEASE", $(".formMain input[name='first_name']").val(), "debug");
+    //     colorLog("window.DODIALPLEASERESP", JSON.stringify(window.DODIALPLEASERESP), "debug");
+    //     colorLog("window.DODIALPLEASEID", window.DODIALPLEASEID, "debug");
+    //     colorLog("ISPAUSED", $("#DispoSelectStop").is(':checked'), "debug");
+    // }
+    // if ((!window.DODIALPLEASE || (window.DODIALPLEASE === 1 && !window.DDNLoop) || window.DODIALPLEASE === 2) && ((!window.DODIALPLEASETIME || (new Date().getTime() - window.DODIALPLEASETIME) > 1500) || (!window.DODIALPLEASEFUNC || (window.DODIALPLEASEFUNC.times === 1 && window.DODIALPLEASEFUNC.func === 'goManualDialSkip'))) && !window.DODIALPLEASELOADING && dialingINprogress !== 1) {
+    //     window.DODIALPLEASELOADING = 1;
+    //     // do nothing
+    //     colorLog("END", "---------------", "info");
+    // } else {
+    //     if (window.DODIALPLEASELOADING) {
+    //         colorLog("window.DODIALPLEASELOADING", window.DODIALPLEASELOADING, "error");
+    //     }
+    //     colorLog("window.DODIALPLEASE", window.DODIALPLEASE, "error");
+    //     colorLog("END", "---------------", "info");
+    //     return;
+    // }
 
-    if (window.DODIALPLEASEFUNC && window.DODIALPLEASEFUNC.times === 1) {
-        window.DODIALPLEASEFUNC.times += 1;
-    }
+    // if (window.DODIALPLEASEFUNC && window.DODIALPLEASEFUNC.times === 1) {
+    //     window.DODIALPLEASEFUNC.times += 1;
+    // }
 
     dialingINprogress = 1;
     if (waiting_on_dispo > 0) {
@@ -7478,6 +7738,7 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
         else
             {var call_prefix = manual_dial_prefix;}
         
+        window.Patcher.dialNextCaller({start: !window.Patcher.data.steps.failed ? true : false});
         var postData = {
             goAction: 'goManualDialNext',
             goUser: uName,
@@ -7517,17 +7778,17 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
             responsetype: 'json'
         };
         
-        const prevDODIALPLEASE = window.DODIALPLEASE;
-        // if(window.DODIALPLEASE === 1) {
-            window.DODIALPLEASE = 3;
-            window.DODIALPLEASETIME = new Date().getTime();
-        // } 
-        // else if (window.DODIALPLEASE === 0) {
-        //     window.DODIALPLEASE = 999;
-        // }
+        // const prevDODIALPLEASE = window.DODIALPLEASE;
+        // // if(window.DODIALPLEASE === 1) {
+        //     window.DODIALPLEASE = 3;
+        //     window.DODIALPLEASETIME = new Date().getTime();
+        // // } 
+        // // else if (window.DODIALPLEASE === 0) {
+        // //     window.DODIALPLEASE = 999;
+        // // }
         $.ajax({
             type: 'POST',
-            url: '<?=$goAPI?>/goAgent/goAPI.php?goManualDialNext=' + prevDODIALPLEASE + '&DODIALPLEASETIME=' + window.DODIALPLEASETIME,
+            url: '<?=$goAPI?>/goAgent/goAPI.php?goManualDialNext=', // url: '<?=$goAPI?>/goAgent/goAPI.php?goManualDialNext=' + prevDODIALPLEASE + '&DODIALPLEASETIME=' + window.DODIALPLEASETIME,
             processData: true,
             data: postData,
             dataType: "json",
@@ -7536,10 +7797,21 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
             }
         })
         .done(function (result) {
-            window.DODIALPLEASEFUNC = false;
-            window.DODIALPLEASERESP = !window.DODIALPLEASERESP ? (result.data && result.data.lead_id && [result.data.lead_id]) || [] : [...window.DODIALPLEASERESP, result.data.lead_id];
-            window.DODIALPLEASEID = result.data.lead_id;
-            window.DODIALPLEASELOADING = false;
+            if(result && result.result === 'error' && window.Patcher.isClick()) {
+                window.Patcher.setAutoDialSteps('failed', true);
+                window.Patcher.setStart(false);
+            } else {
+                if(window.Patcher.data.steps.failed) {
+                    window.Patcher.setAutoDialSteps('failed', false);
+                    window.Patcher.setStart(true);
+                }
+                window.Patcher.setAutoDialSteps('goManualDialNext', true);
+            }
+            window.Patcher.setClick(false);
+            // window.DODIALPLEASEFUNC = false;
+            // window.DODIALPLEASERESP = !window.DODIALPLEASERESP ? (result.data && result.data.lead_id && [result.data.lead_id]) || [] : [...window.DODIALPLEASERESP, result.data.lead_id];
+            // window.DODIALPLEASEID = result.data.lead_id;
+            // window.DODIALPLEASELOADING = false;
             //dialingINprogress = 0;
             //console.log(result);
 
@@ -7567,7 +7839,8 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
                     auto_dial_level = starting_dial_level;
 
                     if (ERR_MSG.match(regMNCvar)) {
-                        swal("<?=$lh->translationFor('no_leads_on_hopper')?>.");
+                        if(!window.Patcher.data.steps.failed) alert("<?=$lh->translationFor('no_leads_on_hopper')?>."); // swal("<?=$lh->translationFor('no_leads_on_hopper')?>.");
+                        else window.Patcher.setAutoDialSteps('failed', false);
                         alert_displayed = 1;
                     }
                     if (ERR_MSG.match(regMDFvarDNC)) {
@@ -7949,6 +8222,10 @@ function ManualDialNext(mdnCBid, mdnBDleadid, mdnDiaLCodE, mdnPhonENumbeR, mdnSt
                 }
             }
         });
+    }
+
+    return function(data = '') {
+        console.log('ManualDialed', data);
     }
 }
 
@@ -9693,7 +9970,7 @@ function CallBackDateSubmit() {
     $("#DispoSelection").val('CBHOLD');
     $("#callback-datepicker").modal('hide');
     
-    $("#DispoSelectStop").prop('checked', false);
+    // $("#DispoSelectStop").prop('checked', false);
     
     DispoSelectSubmit();
     CallBacksCountCheck();
