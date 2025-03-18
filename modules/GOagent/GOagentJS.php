@@ -464,11 +464,22 @@ class Patcher {
                 timeout: false,
                 failed: false,
                 paused: false,
+                fromShift1: false,
             },
             focused: false,
         }
         this.appendPauseBtn();
     }
+
+    pauseAutoDial = () => {
+        this.data.steps.paused = true;
+        $('#DispoSelectStop').prop('checked', true);
+        clearInterval(dialInterval);
+        setTimeout(() => {
+            toggleButton('DialHangup', 'dial');
+        }, 1000);
+    }
+
     appendPauseBtn = () => {
         $(window).load(() => {
             // $('#select-disposition').addClass('fade-in').removeClass('fade').show();
@@ -601,15 +612,19 @@ let target1 = $('#DispoSelectStop').parents('.pull-left').first();
             this.clickDialNext();
             $('#select-disposition').css({opacity: '0.01'});
             let interval = setInterval(() => {
+                console.log('setting interval');
                 if ($('.btn.dispo-focus').is(':visible')) {
                     $('.btn.dispo-focus').first().click();
                     $('#btn-dispo-submit').click();
+                    window.Patcher.setAutoDialSteps('fromShift1', true);
                     clearInterval(interval);
                     setTimeout(() => {
                         $('#select-disposition').css({opacity: '1'});
                     }, 1000);
                 }
             }, 1000);
+        } else if (!this.data.steps.goManualDialNext && !this.data.steps.goUpdateDispo && !this.data.steps.goManualDialSkip && this.data.steps.paused && !check_inbound_call) {
+            this.clickDialNext();
         }
     }
 
@@ -1573,8 +1588,8 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
                             type: 'error'
                         });
                     } else {
-                        //  btnLogMeOut();
-                        $("#cream-agent-logout").click();
+                         btnLogMeOut();
+                        // $("#cream-agent-logout").click(); // TODO: Remove this once we have a new logout button
                     }
     
                 // Phone Log In
@@ -2134,7 +2149,7 @@ $('#callback-datepicker').on('shown.bs.modal', function(){
             $("body").css('overflow-y', 'auto');
             CustomerData_update();
         }
-        
+        window.Patcher.setAutoDialSteps('fromShift1', true);
         DispoSelectSubmit();
     });
     
@@ -6451,6 +6466,9 @@ function DispoSelectBox() {
     //     colorLog('window.SUBMITDISPO reject', (new Date().getTime() - window.SUBMITDISPO), 'debug');
     //     return;
     // }
+    if(!$("#DispoSelectStop").is(':checked')) {
+        $("#DispoSelectStop").prop('checked', true);
+    }
     $("#select-disposition").modal({
         keyboard: false,
         backdrop: 'static'
@@ -6484,6 +6502,7 @@ function DispoSelectContent_create(taskDSgrp,taskDSstage) {
         var dispo_HTML = "<script>";
             dispo_HTML = dispo_HTML + "$(function() {";
             dispo_HTML = dispo_HTML + "    $('[id^=dispo-add-]').click(function() {";
+            dispo_HTML = dispo_HTML + "    window.Patcher.setAutoDialSteps('fromShift1', true);";
             dispo_HTML = dispo_HTML + "        var dispoID = $(this).attr('id');";
             dispo_HTML = dispo_HTML + "        DispoSelectContent_create(dispoID.replace('dispo-add-', ''), 'ADD');";
             //dispo_HTML = dispo_HTML + "alert($('#DispoSelection').val());";
@@ -6694,10 +6713,18 @@ function DispoSelectSubmit() {
                 //     colorLog('window.DODIALPLEASE 2', window.DODIALPLEASE, 'debug');
                 //     window.DDNLoop = true;
                     window.Patcher.setAutoDialSteps('loop', true);
-                    if(window.Patcher.data.steps.paused) {
+                    // if(!window.Patcher.data.steps.paused) {
+                    //     window.Patcher.data.steps.paused = true;
+                    //     $('#DispoSelectStop').prop('checked', true);
+                    // }
+                    console.log(window.Patcher.data.steps.fromShift1, window.Patcher.data.steps.paused, $('#DispoSelectStop').is(':checked'), 'carl');
+                    if(window.Patcher.data.steps.fromShift1 && (window.Patcher.data.steps.paused || $('#DispoSelectStop').is(':checked'))) {
+                        window.Patcher.pauseAutoDial();
+                    } else {
                         window.Patcher.data.steps.paused = false;
                         $('#DispoSelectStop').prop('checked', false);
                     }
+                    window.Patcher.setAutoDialSteps('fromShift1', false);
                 }
                 // window.DODIALPLEASE = 2;
 
@@ -6906,6 +6933,7 @@ function DispoSelectSubmit() {
                                 manual_auto_hotkey = 0;
                                 if (deBug) console.log("ManualDialNext", "Line #: <?=__LINE__?>");
                                 var mdTimer = setInterval(function() {
+                                    console.log('setting interval');
                                     if (waiting_on_dispo < 1) {
                                         ManualDialNext('','','','','','0')("Line #: <?=__LINE__?>");
                                         clearInterval(mdTimer);
