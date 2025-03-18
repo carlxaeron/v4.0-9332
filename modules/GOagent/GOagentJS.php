@@ -465,6 +465,7 @@ class Patcher {
                 failed: false,
                 paused: false,
                 fromShift1: false,
+                timeout_submit: false,
             },
             focused: false,
         }
@@ -580,6 +581,7 @@ let target1 = $('#DispoSelectStop').parents('.pull-left').first();
         const isAgentDispoing = AgentDispoing < 1;
         const isTimeout = this.data.steps.timeout;
         const isPass2 = isDnVisible && !isDnDisabled && !isDispoStop && !isSweetAlert && isAgentDispoing && !this.isClick();
+        const isPass3 = this.data.steps.goManualDialNext && this.data.steps.goUpdateDispo;
         const isPass = isPass2 && isDnVisible && !isDnDisabled && !isDispoStop && !isSweetAlert && isAgentDispoing && !this.isClick() && !this.data.steps.failed;
         const time = new Date().getTime();
 
@@ -608,7 +610,7 @@ let target1 = $('#DispoSelectStop').parents('.pull-left').first();
             this.setClick(new Date().getTime());
             this.setData('visible', false);
             this.setAutoDialStepsReset();
-        } else if (isTimeout && isPass2) {
+        } else if ((isTimeout && isPass2)) {
             this.clickDialNext();
             $('#select-disposition').css({opacity: '0.01'});
             let interval = setInterval(() => {
@@ -6474,6 +6476,13 @@ function DispoSelectBox() {
         backdrop: 'static'
     });
     DispoSelectContent_create('','ReSET');
+
+    if (window.Patcher.data.steps.timeout_submit) {
+        $("#select-disposition").modal('hide');
+        $('#btnDialHangup[title="Dial Next Call"]').click();
+        window.Patcher.setAutoDialSteps('timeout_submit', false);
+        window.Patcher.setAutoDialSteps('timeout', false);
+    }
 }
 
 function DispoSelectContent_create(taskDSgrp,taskDSstage) {
@@ -6704,6 +6713,9 @@ function DispoSelectSubmit() {
             })
             .done(function (result) {
                 window.Patcher.setAutoDialSteps('goUpdateDispo', true);
+                if(window.Patcher.data.steps.timeout) {
+                    window.Patcher.setAutoDialSteps('timeout_submit', true);
+                }
                 // colorLog('window.SUBMITDISPO', window.SUBMITDISPO, 'debug');
                 // window.SUBMITDISPO = new Date().getTime();
                 if(
